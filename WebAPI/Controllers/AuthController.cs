@@ -136,7 +136,7 @@ namespace WebAPI.Controllers
             }
             return Ok("Logout successfully.");
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [SwaggerOperation(Summary = "For get information of current user.")]
         [ServiceFilter(typeof(AccessTokenBlacklistFilter))]
