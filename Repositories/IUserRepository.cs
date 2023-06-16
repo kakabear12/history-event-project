@@ -16,5 +16,9 @@ namespace Repositories
         Task<LogoutResponse> Logout(int id);
         Task<IEnumerable<AccessTokenBlacklist>> GetAccessTokenBlacklists();
         void AddAccessTokenToBlacklist(AccessTokenBlacklist accessToken);
+        Task<IEnumerable<User>> GetUsersAsync();
+        Task DeleteUserAsync(int id);
+        Task<User> UpdateUserAsync(User user);
+        Task UpdateRoleUser(int id, string role);
     }
 }

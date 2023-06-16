@@ -64,5 +64,24 @@ namespace Repositories
             tokenBlacklistDAO.AddBlacklist(accessToken);
         }
 
+        public async Task<IEnumerable<User>> GetUsersAsync()
+        {
+           return await userDAO.GetUsersAsync();
+        }
+
+        public async Task DeleteUserAsync(int id)
+        {
+            await userDAO.DeleteUserAsync(id);
+        }
+
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            return await userDAO.UpdateUserAsync(user);
+        }
+
+        public async Task UpdateRoleUser(int id, string role)
+        {
+            await userDAO.UpdateRole(id, role);
+        }
     }
 }

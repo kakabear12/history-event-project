@@ -1,8 +1,10 @@
 ﻿using BusinessObjectsLayer.Models;
 using DTOs.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -104,6 +106,87 @@ namespace DataAccessLayer
             }
         }
 
+        public async Task<List<User>> GetUsersAsync()
+        {
+            try
+            {
+                return await context.Users.ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+        public async Task DeleteUserAsync(int id)
+        {
+            try
+            {
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+                if(user == null) {
+                    throw new CustomException("User not found.");
+                }
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            try
+            {
+                var userUpdate = await context.Users.FirstOrDefaultAsync(u=> u.UserId == user.UserId);
+                if(userUpdate == null)
+                {
+                    throw new CustomException("User not found.");
+                }
+                if(user.Email != userUpdate.Email)
+                {
+                    if(EmailExists(user.Email)) {
+                        throw new CustomException("Email was existed");
+                    }
+                }
+                userUpdate.Name = user.Name;
+                userUpdate.Birthday = user.Birthday;
+                await context.SaveChangesAsync();
+                return userUpdate;
 
+            }
+            catch(Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+        public async Task UpdateRole(int id, string role)
+        {
+            try
+            {
+                var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+                if(user == null)
+                {
+                    throw new CustomException("User not found");
+                }
+                if(Role.Admin.ToString().Contains(role)) {
+                    user.Role = Role.Admin;
+                } else if (Role.Member.ToString().Contains(role))
+                {
+                    user.Role = Role.Member;
+                } else if (Role.Editor.ToString().Contains(role))
+                {
+                    user.Role = Role.Editor;
+                }
+                else
+                {
+                    throw new CustomException("Role not found");
+                }
+
+                await context.SaveChangesAsync();
+            }catch(Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
     }
 }

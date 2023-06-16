@@ -2,6 +2,7 @@
 using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
+using System.Collections.Generic;
 
 namespace WebAPI
 {
@@ -11,6 +12,8 @@ namespace WebAPI
         {
             CreateMap<RegisterModel, User>();
             CreateMap<User, CurrentUserResponse>();
+            CreateMap<User, UserReponse>();
+            CreateMap<UpdateUserModel, User>();
         }
     }
 }
