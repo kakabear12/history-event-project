@@ -11,7 +11,7 @@ namespace DTOs.Request
     public class UpdateRoleRequest
     {
         [Required(ErrorMessage = "Id is required field.")]
-        public int Id { get; set; }
+        public int UserId { get; set; }
         [Required(ErrorMessage = "Role is required field.")]
         [EnumDataType(typeof(Role), ErrorMessage = "Invalid role. Role are: Admin, Member, Editor")]
         public string Role { get; set; }

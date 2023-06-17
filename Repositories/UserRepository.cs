@@ -23,12 +23,12 @@ namespace Repositories
 
         public async Task<User> GetCurrentUserById(int id)
         {
-           return userDAO.GetUserByUserId(id);
+           return await userDAO.GetUserByUserId(id);
         }
 
         public async Task<User> Login(string email, string password)
         {
-            return userDAO.Login(email, password);
+            return await userDAO.Login(email, password);
         }
 
         public string Register(User user)

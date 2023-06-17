@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            await _userRepository.UpdateRoleUser(request.Id, request.Role);
+            await _userRepository.UpdateRoleUser(request.UserId, request.Role);
             return Ok(new ResponseObject
             {
                 Message = "Update role successfully",

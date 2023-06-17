@@ -35,19 +35,19 @@ namespace DataAccessLayer
                 user.Password = passSalt + " " + passHash;
                 context.Users.Add(user);
                 context.SaveChanges();
-                return "OK";
+                return  "OK";
             }
             catch (Exception ex) {
                 throw new Exception(ex.Message);
             }
         }
-        public User Login(string email, string password)
+        public async Task<User> Login(string email, string password)
         {
             try
             {
                 if (EmailExists(email))
                 {
-                    var user = context.Users.FirstOrDefault(u => u.Email == email);
+                    var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
 
                     var passParts = user.Password.Split(' ');
                     string passSalt = passParts[0];
@@ -94,11 +94,11 @@ namespace DataAccessLayer
             return context.Users.Any(u => u.Email == email);
         }
 
-        public User GetUserByUserId(int id)
+        public async Task<User> GetUserByUserId(int id)
         {
             try
             {
-                return context.Users.FirstOrDefault(u => u.UserId == id);
+                return await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
             }
             catch (Exception ex)
             {

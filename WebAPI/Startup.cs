@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repositories;
+using Repositories.Interfaces;
 using Repositories.JWT;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -37,10 +38,14 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<HistoryEventDBContext>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+
             services.AddScoped<UserDAO>();
             services.AddScoped<RefreshTokenDAO>();
             services.AddScoped<AccessTokenBlacklistDAO>();
+            services.AddScoped<CategoryDAO>();
             services.AddScoped<TokenGenerator>();
             services.AddScoped<AccessTokenBlacklistFilter>();
             services.AddControllersWithViews();

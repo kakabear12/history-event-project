@@ -14,6 +14,10 @@ namespace WebAPI
             CreateMap<User, CurrentUserResponse>();
             CreateMap<User, UserReponse>();
             CreateMap<UpdateUserModel, User>();
+            CreateMap<Category, CategoryResponse>();
+            CreateMap<CreateCategoryRequest, Category>();
+            CreateMap<UpdateCategoryRequest, Category>();
+
         }
     }
 }
