@@ -39,6 +39,6 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
-        public
+        
     }
 }
