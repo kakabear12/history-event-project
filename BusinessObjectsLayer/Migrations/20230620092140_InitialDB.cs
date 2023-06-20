@@ -92,18 +92,11 @@ namespace BusinessObjectsLayer.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PostContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: true),
                     EventId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.PostId);
-                    table.ForeignKey(
-                        name: "FK_Posts_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "CategoryId",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Posts_Events_EventId",
                         column: x => x.EventId,
@@ -174,6 +167,30 @@ namespace BusinessObjectsLayer.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CategoryPost",
+                columns: table => new
+                {
+                    CategoriesCategoryId = table.Column<int>(type: "int", nullable: false),
+                    PostsPostId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryPost", x => new { x.CategoriesCategoryId, x.PostsPostId });
+                    table.ForeignKey(
+                        name: "FK_CategoryPost_Categories_CategoriesCategoryId",
+                        column: x => x.CategoriesCategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CategoryPost_Posts_PostsPostId",
+                        column: x => x.PostsPostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -259,14 +276,14 @@ namespace BusinessObjectsLayer.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoryPost_PostsPostId",
+                table: "CategoryPost",
+                column: "PostsPostId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Documents_PostId",
                 table: "Documents",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Posts_CategoryId",
-                table: "Posts",
-                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_EventId",
@@ -313,6 +330,9 @@ namespace BusinessObjectsLayer.Migrations
                 name: "Answers");
 
             migrationBuilder.DropTable(
+                name: "CategoryPost");
+
+            migrationBuilder.DropTable(
                 name: "Documents");
 
             migrationBuilder.DropTable(
@@ -325,6 +345,9 @@ namespace BusinessObjectsLayer.Migrations
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
                 name: "Posts");
 
             migrationBuilder.DropTable(
@@ -335,9 +358,6 @@ namespace BusinessObjectsLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Events");

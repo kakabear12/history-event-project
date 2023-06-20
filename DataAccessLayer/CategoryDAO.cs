@@ -47,11 +47,6 @@ namespace DataAccessLayer
                 {
                     throw new CustomException("Category not found");
                 }
-                var posts = await context.Posts.Where(p=> p.Category.CategoryId == id).ToListAsync();
-                foreach(var i in posts)
-                {
-                    context.Remove(i);
-                }
                 context.Categories.Remove(category);
                 await context.SaveChangesAsync();
             }catch(Exception ex)

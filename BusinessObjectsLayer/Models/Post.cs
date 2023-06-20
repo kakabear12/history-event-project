@@ -18,7 +18,7 @@ namespace BusinessObjectsLayer.Models
         [Required]
         public DateTime Date { get; set; }
 
-        public virtual Category Category { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public virtual Event Event { get; set; }
         public virtual ICollection<Document> Documents { get; set; }
     }
