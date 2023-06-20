@@ -19,7 +19,7 @@ namespace BusinessObjectsLayer.Models
         public DateTime Date { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; }
-        public virtual Event Event { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<Document> Documents { get; set; }
     }
 }

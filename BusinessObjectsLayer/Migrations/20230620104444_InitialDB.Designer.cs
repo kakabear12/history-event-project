@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    [Migration("20230620092140_InitialDB")]
+    [Migration("20230620104444_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,9 +138,6 @@ namespace BusinessObjectsLayer.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PostContent")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -150,8 +147,6 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PostId");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Posts");
                 });
@@ -335,6 +330,21 @@ namespace BusinessObjectsLayer.Migrations
                     b.ToTable("CategoryPost");
                 });
 
+            modelBuilder.Entity("EventPost", b =>
+                {
+                    b.Property<int>("EventsEventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostsPostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EventsEventId", "PostsPostId");
+
+                    b.HasIndex("PostsPostId");
+
+                    b.ToTable("EventPost");
+                });
+
             modelBuilder.Entity("BusinessObjectsLayer.Models.Answer", b =>
                 {
                     b.HasOne("BusinessObjectsLayer.Models.Question", "Question")
@@ -351,15 +361,6 @@ namespace BusinessObjectsLayer.Migrations
                         .HasForeignKey("PostId");
 
                     b.Navigation("Post");
-                });
-
-            modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
-                {
-                    b.HasOne("BusinessObjectsLayer.Models.Event", "Event")
-                        .WithMany("Posts")
-                        .HasForeignKey("EventId");
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.QuestionQuiz", b =>
@@ -427,10 +428,23 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EventPost", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.Post", null)
+                        .WithMany()
+                        .HasForeignKey("PostsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BusinessObjectsLayer.Models.Event", b =>
                 {
-                    b.Navigation("Posts");
-
                     b.Navigation("Quizzes");
                 });
 
