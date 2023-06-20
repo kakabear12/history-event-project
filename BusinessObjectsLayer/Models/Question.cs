@@ -15,7 +15,7 @@ namespace BusinessObjectsLayer.Models
         public string QuestionText { get; set; }
         [Required]
         public DifficultyLevel DifficultyLevel { get; set; }
-
+        public virtual Event Event { get; set; }
         public virtual ICollection<Answer> Answers { get; set; }
         public virtual ICollection<QuestionQuiz> QuestionQuizzes { get; set; }
     }

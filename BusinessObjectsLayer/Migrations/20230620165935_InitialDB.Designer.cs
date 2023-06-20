@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    [Migration("20230620153123_InitialDB")]
+    [Migration("20230620165935_InitialDB")]
     partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,6 +116,9 @@ namespace BusinessObjectsLayer.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("EventId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("EventName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -124,6 +127,8 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("EventId");
+
+                    b.HasIndex("EventId1");
 
                     b.ToTable("Events");
                 });
@@ -161,11 +166,16 @@ namespace BusinessObjectsLayer.Migrations
                     b.Property<int>("DifficultyLevel")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("QuestionText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("QuestionId");
+
+                    b.HasIndex("EventId");
 
                     b.ToTable("Questions");
                 });
@@ -202,9 +212,6 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("int");
-
                     b.Property<int>("NumberQuestion")
                         .HasColumnType("int");
 
@@ -212,8 +219,6 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("QuizId");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Quizzes");
                 });
@@ -362,6 +367,22 @@ namespace BusinessObjectsLayer.Migrations
                     b.Navigation("Post");
                 });
 
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Event", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Event", null)
+                        .WithMany("Events")
+                        .HasForeignKey("EventId1");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("BusinessObjectsLayer.Models.QuestionQuiz", b =>
                 {
                     b.HasOne("BusinessObjectsLayer.Models.Question", "Question")
@@ -375,15 +396,6 @@ namespace BusinessObjectsLayer.Migrations
                     b.Navigation("Question");
 
                     b.Navigation("Quiz");
-                });
-
-            modelBuilder.Entity("BusinessObjectsLayer.Models.Quiz", b =>
-                {
-                    b.HasOne("BusinessObjectsLayer.Models.Event", "Event")
-                        .WithMany("Quizzes")
-                        .HasForeignKey("EventId");
-
-                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.QuizResult", b =>
@@ -444,7 +456,7 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Event", b =>
                 {
-                    b.Navigation("Quizzes");
+                    b.Navigation("Events");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
