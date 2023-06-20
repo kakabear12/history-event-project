@@ -15,7 +15,6 @@ namespace BusinessObjectsLayer.Models
         public int Time { get; set; }
         [Required]
         public int NumberQuestion { get; set; }
-        public virtual Event Event { get; set; }
         public virtual ICollection<QuestionQuiz> QuestionQuizzes { get; set; }
         public virtual ICollection<QuizResult> QuizResults { get; set; }
     }

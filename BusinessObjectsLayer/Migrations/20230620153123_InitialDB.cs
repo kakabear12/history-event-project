@@ -72,7 +72,7 @@ namespace BusinessObjectsLayer.Migrations
                     QuestionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DifficultyLevel = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DifficultyLevel = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

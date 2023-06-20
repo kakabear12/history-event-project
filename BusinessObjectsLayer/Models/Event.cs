@@ -19,6 +19,6 @@ namespace BusinessObjectsLayer.Models
         public string Description { get; set; }
 
         public virtual ICollection<Post> Posts { get; set; }
-        public virtual ICollection<Quiz> Quizzes { get; set; }
+        public virtual ICollection<Event> Events { get; set; }
     }
 }
