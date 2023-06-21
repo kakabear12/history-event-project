@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
             this.userRepository = userRepository;
         }
         [HttpPost("createQuiz")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For create quiz for user")]
         public async Task<IActionResult> CreateQuiz(int eventId, [FromBody] CreateQuizRequest request)
         {
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             });
         }
         [HttpGet("getQuiz")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For get quiz for member to do")]
         public async Task<IActionResult> GetQuiz(int quizId)
         {
@@ -62,7 +62,7 @@ namespace WebAPI.Controllers
             return Ok(resquiz);
         }
         [HttpPost("getResultQuiz")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For get result of quiz")]
         public async Task<IActionResult> GetQuizResult([FromBody]ResultQuizRequest request)
         {
