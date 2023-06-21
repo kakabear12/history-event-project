@@ -41,8 +41,16 @@ namespace WebAPI
             services.AddDbContext<HistoryEventDBContext>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IQuestionRepository, QuestionRepository>();
+            services.AddScoped<IAnswerRepository, AnswerRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IQuizRepository, QuizRepository>();
 
+            services.AddScoped<QuizDAO>();
+            services.AddScoped<AnswerDAO>();
+            services.AddScoped<EventDAO>();
             services.AddScoped<UserDAO>();
+            services.AddScoped<QuestionDAO>();
             services.AddScoped<RefreshTokenDAO>();
             services.AddScoped<AccessTokenBlacklistDAO>();
             services.AddScoped<CategoryDAO>();

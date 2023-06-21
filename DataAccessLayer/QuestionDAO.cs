@@ -19,7 +19,7 @@ namespace DataAccessLayer
         public async Task<List<Question>> GetQuestionsAsync()
         {
             try {
-                return await context.Questions.ToListAsync();
+                return await context.Questions.Include(c => c.Event).ToListAsync();
             }catch (Exception ex) {
                 throw new CustomException(ex.Message);
             }
@@ -27,7 +27,7 @@ namespace DataAccessLayer
         public async Task<List<Question>> GetQuesttionsFinished()
         {
             try {
-                var qts = await context.Questions.Where(q => q.Answers.Count > 0
+                var qts = await context.Questions.Include(c=> c.Event).Where(q => q.Answers.Count > 1
                 && q.Answers.Count(a => a.IsCorrect) == 1
                 ).ToListAsync();
                 if(qts.Count == 0) {
@@ -43,6 +43,9 @@ namespace DataAccessLayer
         {
             try
             {
+                if(context.Questions.Any(c=> c.QuestionText == q.QuestionText)) {
+                    throw new CustomException("The question had exised");
+                }
                 var newQ = await context.Questions.AddAsync(q);
                 await context.SaveChangesAsync();
                 return newQ.Entity;
@@ -60,13 +63,14 @@ namespace DataAccessLayer
                 {
                     throw new Exception("Not found question");
                 }
-                if(questions.Answers.Count > 0)
+                if(questions.Answers != null)
                 {
                     foreach (var ans in questions.Answers)
                     {
                         context.Answers.Remove(ans);
                     }
                 }
+               
                 context.Questions.Remove(questions);
                 await context.SaveChangesAsync();
 
@@ -78,7 +82,7 @@ namespace DataAccessLayer
         public async Task<Question> UpdateQuestion(Question question) {
             try
             {
-                var updateQ = await context.Questions.FirstOrDefaultAsync(q => q.QuestionId == question.QuestionId);
+                var updateQ = await context.Questions.Include(c=> c.Event).FirstOrDefaultAsync(q => q.QuestionId == question.QuestionId);
                 if(updateQ == null)
                 {
                     throw new Exception("Question not found");
@@ -87,6 +91,21 @@ namespace DataAccessLayer
                 updateQ.QuestionText = question.QuestionText;
                 await context.SaveChangesAsync();
                 return updateQ;
+            }catch (Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+        public async Task<Question> GetQuestionById(int id)
+        {
+            try
+            {
+                var quest = await context.Questions.SingleOrDefaultAsync(c => c.QuestionId == id);
+                if(quest == null)
+                {
+                    throw new CustomException("Question not found");
+                }
+                return quest;
             }catch (Exception ex)
             {
                 throw new CustomException(ex.Message);

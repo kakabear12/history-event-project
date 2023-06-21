@@ -27,7 +27,6 @@ namespace BusinessObjectsLayer.Models
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionQuiz> QuestionQuizzes { get; set; }
         public virtual DbSet<Quiz> Quizzes { get; set; }
-        public virtual DbSet<QuizResult> QuizResults { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<AccessTokenBlacklist> AccessTokenBlacklists { get; set; }

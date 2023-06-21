@@ -24,7 +24,7 @@ namespace BusinessObjectsLayer.Models
         [Required]
         public Role Role { get; set; }
 
-        public virtual ICollection<QuizResult> QuizResults { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<Quiz> Quizzes { get; set; }
     }
 }

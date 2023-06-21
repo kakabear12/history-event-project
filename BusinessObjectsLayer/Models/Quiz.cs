@@ -15,7 +15,10 @@ namespace BusinessObjectsLayer.Models
         public int Time { get; set; }
         [Required]
         public int NumberQuestion { get; set; }
+        public int Score { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? EndTime { get; set; }
+        public virtual User User { get; set; }
         public virtual ICollection<QuestionQuiz> QuestionQuizzes { get; set; }
-        public virtual ICollection<QuizResult> QuizResults { get; set; }
     }
 }

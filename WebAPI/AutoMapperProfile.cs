@@ -17,7 +17,19 @@ namespace WebAPI
             CreateMap<Category, CategoryResponse>();
             CreateMap<CreateCategoryRequest, Category>();
             CreateMap<UpdateCategoryRequest, Category>();
-
+            CreateMap<CreateQuestionRequest, Question>();
+            CreateMap<Question, QuestionResponse>();
+            CreateMap<UpdateQuestionRequest, Question>();
+            CreateMap<Answer, AnswerResponse>();
+            CreateMap<CreateAnswerRequest, Answer>();
+            CreateMap<UpdateAnswerRequest, Answer>();
+            CreateMap<CreateQuizRequest, Quiz>();
+            CreateMap<Quiz, QuizResponse>();
+            CreateMap<Quiz, GetQuizResponse>();
+            CreateMap<QuestionQuiz, QuestionQuizResponse>();
+            CreateMap<Question, GetQuestionResponse>();
+            CreateMap<Answer, GetAnswerToDoResponse>();
+            CreateMap<Quiz, QuizResultResponse>();
         }
     }
 }

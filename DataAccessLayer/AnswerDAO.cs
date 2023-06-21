@@ -20,7 +20,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var ans = await context.Answers.Where(a=> a.Question.QuestionId == questionId).ToListAsync();
+                var ans = await context.Answers.Include(c => c.Question).Where(a=> a.Question.QuestionId == questionId).ToListAsync();
                 return ans;
             }catch (Exception ex)
             {
@@ -30,7 +30,23 @@ namespace DataAccessLayer
         public async Task<Answer> CreateAnswer(Answer answer)
         {
             try {
+                var quest = await context.Questions.Include(c=> c.Answers).SingleOrDefaultAsync(c => c.QuestionId == answer.Question.QuestionId);
+                if (quest == null)
+                {
+                    throw new CustomException("Question not found");
+                }
+                if (quest.Answers.Count > 0 && answer.IsCorrect == true)
+                {
+                    if(quest.Answers.Any(c=> c.IsCorrect == true)){
+                        throw new CustomException("The question has the correct answer");
+                    }
+                }
+                if(quest.Answers.Any(c=> c.AnswerText == answer.AnswerText))
+                {
+                    throw new CustomException("The answer had existed");
+                }
                 var createAnswer = await context.Answers.AddAsync(answer);
+                
                 await context.SaveChangesAsync();
                 return createAnswer.Entity;
             }
@@ -43,6 +59,18 @@ namespace DataAccessLayer
         {
             try
             {
+                var quest = await context.Questions.Include(c => c.Answers).SingleOrDefaultAsync(c => c.QuestionId == answer.Question.QuestionId);
+                if (quest == null)
+                {
+                    throw new CustomException("Question not found");
+                }
+                if (quest.Answers.Count > 0 && answer.IsCorrect == true)
+                {
+                    if (quest.Answers.Any(c => c.IsCorrect == true))
+                    {
+                        throw new CustomException("The question has the correct answer");
+                    }
+                }
                 var updateA = await context.Answers.SingleOrDefaultAsync(a => a.AnswerId == answer.AnswerId);
                 if(updateA == null)
                 {
