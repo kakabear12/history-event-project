@@ -77,29 +77,6 @@ namespace BusinessObjectsLayer.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("BusinessObjectsLayer.Models.Document", b =>
-                {
-                    b.Property<int>("DocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Link")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdateDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("DocumentId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Documents");
-                });
-
             modelBuilder.Entity("BusinessObjectsLayer.Models.Event", b =>
                 {
                     b.Property<int>("EventId")
@@ -133,20 +110,57 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PostContent")
+                    b.Property<string>("Summary")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("ThemeImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Topic")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PostId");
 
+                    b.HasIndex("CreatedByUserId");
+
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostContent", b =>
+                {
+                    b.Property<int>("PostContentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Document")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PostContentId");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostContents");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
@@ -155,6 +169,9 @@ namespace BusinessObjectsLayer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
 
                     b.Property<int>("DifficultyLevel")
                         .HasColumnType("int");
@@ -167,6 +184,8 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("QuestionId");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.HasIndex("EventId");
 
@@ -337,10 +356,19 @@ namespace BusinessObjectsLayer.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("BusinessObjectsLayer.Models.Document", b =>
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.Navigation("CreatedBy");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostContent", b =>
                 {
                     b.HasOne("BusinessObjectsLayer.Models.Post", "Post")
-                        .WithMany("Documents")
+                        .WithMany("PostContents")
                         .HasForeignKey("PostId");
 
                     b.Navigation("Post");
@@ -348,9 +376,15 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
                 {
+                    b.HasOne("BusinessObjectsLayer.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
                     b.HasOne("BusinessObjectsLayer.Models.Event", "Event")
                         .WithMany("Questions")
                         .HasForeignKey("EventId");
+
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("Event");
                 });
@@ -427,7 +461,7 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
                 {
-                    b.Navigation("Documents");
+                    b.Navigation("PostContents");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>

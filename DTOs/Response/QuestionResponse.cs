@@ -12,5 +12,6 @@ namespace DTOs.Response
         public int EventId { get; set; }
         public string QuestionText { get; set; }
         public string DifficultyLevel { get; set; }
+        public string CreatedBy { get; set; }
     }
 }

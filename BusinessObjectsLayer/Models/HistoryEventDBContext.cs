@@ -21,8 +21,8 @@ namespace BusinessObjectsLayer.Models
 
         public virtual DbSet<Answer> Answers { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Document> Documents { get; set; }
         public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<PostContent> PostContents { get; set; }
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionQuiz> QuestionQuizzes { get; set; }

@@ -5,10 +5,12 @@ using DTOs.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using Repositories.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -19,15 +21,33 @@ namespace WebAPI.Controllers
     {
         private readonly IQuestionRepository questionRepository;
         private readonly IEventRepository eventRepository;
+        private readonly IUserRepository userRepository;
         private readonly IMapper mapper;
         public QuestionController(IQuestionRepository questionRepository,
-            IEventRepository eventRepository, IMapper mapper)
+            IEventRepository eventRepository, IMapper mapper,
+            IUserRepository userRepository)
         {
             this.questionRepository = questionRepository;
             this.eventRepository = eventRepository;
             this.mapper = mapper;
+            this.userRepository = userRepository;
         }
+        private int UserID => int.Parse(FindClaim(ClaimTypes.NameIdentifier));
+        private string FindClaim(string claimName)
+        {
 
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+
+            var claim = claimsIdentity.FindFirst(claimName);
+
+            if (claim == null)
+            {
+                return null;
+            }
+
+            return claim.Value;
+
+        }
         [HttpGet("getAllQuestions")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get list of all questions.")]
@@ -91,9 +111,11 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var user = await userRepository.GetCurrentUserById(UserID);
             var ev = await eventRepository.GetEventById(request.EventId);
             var question = mapper.Map<Question>(request);
             question.Event = ev;
+            question.CreatedBy = user;
             var creQ = await questionRepository.CreateQuestion(question);
             var resQ = mapper.Map<QuestionResponse>(creQ);
             resQ.EventId = creQ.Event.EventId;
