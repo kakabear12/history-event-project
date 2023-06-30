@@ -79,6 +79,7 @@ namespace WebAPI
             services.AddScoped<IPostCommentService, PostCommentService>();
 
 
+            services.AddCors();
 
             services.AddControllersWithViews();
             services.AddAutoMapper
@@ -176,7 +177,13 @@ namespace WebAPI
                 });
 
             }
-
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
+                
             app.UseHttpsRedirection();
 
             app.UseAuthentication();

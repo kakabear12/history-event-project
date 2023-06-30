@@ -8,6 +8,7 @@ namespace DTOs.Response
 {
     public class UserReponse
     {
+        public int UserId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public DateTime Birthday { get; set; }
