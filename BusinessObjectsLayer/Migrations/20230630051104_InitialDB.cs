@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BusinessObjectsLayer.Migrations
 {
-    public partial class HistoryDB : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -96,7 +96,7 @@ namespace BusinessObjectsLayer.Migrations
                     PostId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
-                    ParentId = table.Column<int>(type: "int", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -109,6 +109,12 @@ namespace BusinessObjectsLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.PostId);
+                    table.ForeignKey(
+                        name: "FK_Posts_Posts_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Posts_Users_AuthorId",
                         column: x => x.AuthorId,
@@ -247,7 +253,7 @@ namespace BusinessObjectsLayer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PostId = table.Column<int>(type: "int", nullable: false),
-                    ParentId = table.Column<int>(type: "int", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Published = table.Column<byte>(type: "tinyint", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -257,6 +263,12 @@ namespace BusinessObjectsLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PostComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostComments_PostComments_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "PostComments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PostComments_Posts_PostId",
                         column: x => x.PostId,
@@ -374,6 +386,11 @@ namespace BusinessObjectsLayer.Migrations
                 column: "PostsPostId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostComments_ParentId",
+                table: "PostComments",
+                column: "ParentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PostComments_PostId",
                 table: "PostComments",
                 column: "PostId");
@@ -387,6 +404,11 @@ namespace BusinessObjectsLayer.Migrations
                 name: "IX_Posts_AuthorId",
                 table: "Posts",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_ParentId",
+                table: "Posts",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PostTags_TagId",

@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
                 return BadRequest(ModelState);
             }
             User user = mapper.Map<User>(model);
-            user.Role = Role.Member;
+            user.Role = Role.Admin;
             var check = userRepository.Register(user);
             if (check == "OK")
             {

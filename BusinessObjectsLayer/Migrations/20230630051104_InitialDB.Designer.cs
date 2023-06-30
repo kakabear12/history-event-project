@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    [Migration("20230627135512_HistoryDb1")]
-    partial class HistoryDb1
+    [Migration("20230630051104_InitialDB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
