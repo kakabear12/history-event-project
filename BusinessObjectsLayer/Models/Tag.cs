@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
-#nullable disable
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BusinessObjectsLayer.Models
 {
-    public partial class Category
+    public class Tag
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CategoryId { get; set; }
+        public int Id { get; set; }
         [Required]
-        public string CategoryName { get; set; }
-
-        public int ParentId { get; set; }
+        public string Title { get; set; }
+        [Required]
         public string MetaTitle { get; set; }
+        [Required]
         public string Slug { get; set; }
+        [Required]
         public string Contents { get; set; }
-
-        public virtual ICollection<Post> Posts { get; set; }
+       
+        public virtual ICollection<PostTag> PostTags { get; set; }
     }
 }

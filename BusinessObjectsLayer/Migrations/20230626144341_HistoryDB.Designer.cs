@@ -4,14 +4,16 @@ using BusinessObjectsLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    partial class HistoryEventDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230626144341_HistoryDB")]
+    partial class HistoryDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,7 +138,7 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentId")
+                    b.Property<int>("ParentId")
                         .HasColumnType("int");
 
                     b.Property<byte>("Published")
@@ -160,8 +162,6 @@ namespace BusinessObjectsLayer.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.HasIndex("ParentId");
-
                     b.ToTable("Posts");
                 });
 
@@ -179,7 +179,7 @@ namespace BusinessObjectsLayer.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ParentId")
+                    b.Property<int>("ParentId")
                         .HasColumnType("int");
 
                     b.Property<int>("PostId")
@@ -196,8 +196,6 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.HasIndex("PostId");
 
@@ -473,28 +471,16 @@ namespace BusinessObjectsLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BusinessObjectsLayer.Models.Post", "ParentPost")
-                        .WithMany("ChildPosts")
-                        .HasForeignKey("ParentId");
-
                     b.Navigation("Author");
-
-                    b.Navigation("ParentPost");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.PostComment", b =>
                 {
-                    b.HasOne("BusinessObjectsLayer.Models.PostComment", "ParentPost")
-                        .WithMany("ChildPostComments")
-                        .HasForeignKey("ParentId");
-
                     b.HasOne("BusinessObjectsLayer.Models.Post", "Post")
                         .WithMany("PostComments")
                         .HasForeignKey("PostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ParentPost");
 
                     b.Navigation("Post");
                 });
@@ -616,18 +602,11 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
                 {
-                    b.Navigation("ChildPosts");
-
                     b.Navigation("PostComments");
 
                     b.Navigation("PostMetas");
 
                     b.Navigation("PostTags");
-                });
-
-            modelBuilder.Entity("BusinessObjectsLayer.Models.PostComment", b =>
-                {
-                    b.Navigation("ChildPostComments");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>

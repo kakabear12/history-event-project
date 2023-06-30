@@ -22,8 +22,12 @@ namespace BusinessObjectsLayer.Models
         public virtual DbSet<Answer> Answers { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Event> Events { get; set; }
-        public virtual DbSet<PostContent> PostContents { get; set; }
+       
         public virtual DbSet<Post> Posts { get; set; }
+        public virtual DbSet<PostTag> PostTags { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<PostMeta> PostMeta { get; set; }
+        public virtual DbSet<PostComment> PostComments { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<QuestionQuiz> QuestionQuizzes { get; set; }
         public virtual DbSet<Quiz> Quizzes { get; set; }
@@ -40,5 +44,16 @@ namespace BusinessObjectsLayer.Models
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("MyDB"));
         }
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PostTag>()
+                .HasKey(pt => new { pt.PostId, pt.TagId });
+
+        
+
+            // ...
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

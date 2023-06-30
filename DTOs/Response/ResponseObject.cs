@@ -11,4 +11,10 @@ namespace DTOs.Response
         public string Message { get; set; }
         public Object Data { get; set; }
     }
+
+    public class ResponseObject<T>
+    {
+        public string Message { get; set; }
+        public T Data { get; set; }
+    }
 }

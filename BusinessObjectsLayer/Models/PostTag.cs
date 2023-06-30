@@ -5,18 +5,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace BusinessObjectsLayer.Models
 {
-    public class PostContent
+    public class PostTag
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int PostContentId { get; set; }
-        [Required]
-        public string Title { get; set; }
-        [Required]
-        public string Content { get; set; }
-        public string Document { get; set; }
+        [Key, Column(Order = 1)]
+        public int PostId { get; set; }
+        [Key, Column(Order = 2)]
+        public int TagId { get; set; }
+
+        [ForeignKey("PostId")]
         public virtual Post Post { get; set; }
+
+        [ForeignKey("TagId")]
+        public virtual Tag Tag { get; set; }
     }
 }

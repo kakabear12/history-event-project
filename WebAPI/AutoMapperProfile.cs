@@ -30,6 +30,30 @@ namespace WebAPI
             CreateMap<Question, GetQuestionResponse>();
             CreateMap<Answer, GetAnswerToDoResponse>();
             CreateMap<Quiz, QuizResultResponse>();
+
+            //events
+            CreateMap<EventRequestModel, Event>();
+            CreateMap<Event, EventResponseModel>();
+
+            //posts
+            CreateMap<CreatePostRequestModel, Post>();
+            CreateMap<UpdatePostRequestModel, Post>();
+            CreateMap<DeletePostRequestModel,Post>();
+            CreateMap<Post, PostResponseModel>();
+
+            //postmeta
+            CreateMap<PostMetaRequestModel, PostMeta>();
+            CreateMap<PostMeta, PostMetaResponseModel>();
+
+            //Tag
+            CreateMap<TagRequestModel, Tag>();
+            CreateMap<Tag, TagResponseModel>();
+
+            //PostComment
+            CreateMap<PostCommentRequestModel, PostComment>();
+            CreateMap<PostComment, PostCommentResponseModel>();
+
+
         }
     }
 }

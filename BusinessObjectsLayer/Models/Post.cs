@@ -12,16 +12,45 @@ namespace BusinessObjectsLayer.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PostId { get; set; }
         [Required]
-        public string Topic { get; set; }
+        public int AuthorId { get; set; }
+        
+        public int? ParentId { get; set; }
+        [Required]
+        public string MetaTitle { get; set; }
+
+        [Required]
+        public string Slug { get; set; }
         [Required]
         public string Summary { get; set; }
         [Required]
-        public string ThemeImage { get ; set; }
+        public byte Published { get; set; }
+
         [Required]
-        public DateTime Date { get; set; }
-        public virtual User CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        [Required]
+        public DateTime UpdatedAt { get; set; }
+        
+        [Required]
+        public DateTime PublishedAt { get; set; }
+        [Required]
+        public string Content { get; set; }
+
+        [ForeignKey("AuthorId")]
+        public virtual User Author { get; set; }
+       
+        public virtual ICollection<PostComment> PostComments { get; set; }
+       
+        public virtual ICollection<PostMeta> PostMetas { get; set; }
+       
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<Event> Events { get; set; }
-        public virtual ICollection<PostContent> PostContents { get; set; }
+        
+        public virtual ICollection<PostTag> PostTags { get; set; }
+
+        [ForeignKey("ParentId")]
+        public virtual Post ParentPost { get; set; }
+
+        public virtual ICollection<Post> ChildPosts { get; set; }
     }
 }

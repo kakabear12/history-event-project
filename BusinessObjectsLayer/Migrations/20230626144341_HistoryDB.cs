@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BusinessObjectsLayer.Migrations
 {
-    public partial class InitialDB : Migration
+    public partial class HistoryDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -27,7 +27,11 @@ namespace BusinessObjectsLayer.Migrations
                 {
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Contents = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,6 +52,22 @@ namespace BusinessObjectsLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.EventId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Contents = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,21 +95,26 @@ namespace BusinessObjectsLayer.Migrations
                 {
                     PostId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Topic = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: false),
+                    MetaTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ThemeImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedByUserId = table.Column<int>(type: "int", nullable: true)
+                    Published = table.Column<byte>(type: "tinyint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Posts", x => x.PostId);
                     table.ForeignKey(
-                        name: "FK_Posts_Users_CreatedByUserId",
-                        column: x => x.CreatedByUserId,
+                        name: "FK_Posts_Users_AuthorId",
+                        column: x => x.AuthorId,
                         principalTable: "Users",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,25 +241,73 @@ namespace BusinessObjectsLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostContents",
+                name: "PostComments",
                 columns: table => new
                 {
-                    PostContentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    ParentId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Document = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostId = table.Column<int>(type: "int", nullable: true)
+                    Published = table.Column<byte>(type: "tinyint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Contents = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostContents", x => x.PostContentId);
+                    table.PrimaryKey("PK_PostComments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PostContents_Posts_PostId",
+                        name: "FK_PostComments_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
                         principalColumn: "PostId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostMeta",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    Keys = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Contents = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostMeta", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostMeta_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PostTags",
+                columns: table => new
+                {
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    TagId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostTags", x => new { x.PostId, x.TagId });
+                    table.ForeignKey(
+                        name: "FK_PostTags_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "PostId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PostTags_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -301,14 +374,24 @@ namespace BusinessObjectsLayer.Migrations
                 column: "PostsPostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostContents_PostId",
-                table: "PostContents",
+                name: "IX_PostComments_PostId",
+                table: "PostComments",
                 column: "PostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_CreatedByUserId",
+                name: "IX_PostMeta_PostId",
+                table: "PostMeta",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Posts_AuthorId",
                 table: "Posts",
-                column: "CreatedByUserId");
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PostTags_TagId",
+                table: "PostTags",
+                column: "TagId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_QuestionQuizzes_QuestionId",
@@ -356,7 +439,13 @@ namespace BusinessObjectsLayer.Migrations
                 name: "EventPost");
 
             migrationBuilder.DropTable(
-                name: "PostContents");
+                name: "PostComments");
+
+            migrationBuilder.DropTable(
+                name: "PostMeta");
+
+            migrationBuilder.DropTable(
+                name: "PostTags");
 
             migrationBuilder.DropTable(
                 name: "QuestionQuizzes");
@@ -369,6 +458,9 @@ namespace BusinessObjectsLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Posts");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Questions");

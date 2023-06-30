@@ -15,6 +15,8 @@ using Microsoft.OpenApi.Models;
 using Repositories;
 using Repositories.Interfaces;
 using Repositories.JWT;
+using Repositories.Repository;
+using Repositories.Service;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
@@ -46,6 +48,8 @@ namespace WebAPI
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IQuizRepository, QuizRepository>();
 
+            
+
             services.AddScoped<QuizDAO>();
             services.AddScoped<AnswerDAO>();
             services.AddScoped<EventDAO>();
@@ -56,6 +60,26 @@ namespace WebAPI
             services.AddScoped<CategoryDAO>();
             services.AddScoped<TokenGenerator>();
             services.AddScoped<AccessTokenBlacklistFilter>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<EventsRepository>();
+            services.AddScoped<IEventService, EventService>();
+
+            services.AddScoped<PostRepository>();
+            services.AddScoped<IPostService, PostService>();
+
+            services.AddScoped<PostMetaRepository>();
+            services.AddScoped<IPostMetaService, PostMetaService>();
+
+
+            services.AddScoped<PostTagRepository>();
+            services.AddScoped<TagRepository>();
+            services.AddScoped<ITagService, TagService>();
+
+            services.AddScoped<PostCommentRepository>();
+            services.AddScoped<IPostCommentService, PostCommentService>();
+
+
+
             services.AddControllersWithViews();
             services.AddAutoMapper
                     (typeof(AutoMapperProfile).Assembly);

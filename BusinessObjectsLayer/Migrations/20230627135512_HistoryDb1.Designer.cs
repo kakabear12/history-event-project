@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    [Migration("20230625141814_InitialDB")]
-    partial class InitialDB
+    [Migration("20230627135512_HistoryDb1")]
+    partial class HistoryDb1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,6 +74,18 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Contents")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
@@ -112,57 +124,126 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CreatedByUserId")
+                    b.Property<int>("AuthorId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ThemeImage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Topic")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("PostId");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("BusinessObjectsLayer.Models.PostContent", b =>
-                {
-                    b.Property<int>("PostContentId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Document")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MetaTitle")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PostId")
+                    b.Property<int?>("ParentId")
                         .HasColumnType("int");
+
+                    b.Property<byte>("Published")
+                        .HasColumnType("tinyint");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("PostId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Contents")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("Published")
+                        .HasColumnType("tinyint");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PostContentId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentId");
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PostContents");
+                    b.ToTable("PostComments");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostMeta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Contents")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Keys")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostMeta");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostTag", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PostId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("PostTags");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
@@ -283,6 +364,34 @@ namespace BusinessObjectsLayer.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Contents")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags");
+                });
+
             modelBuilder.Entity("BusinessObjectsLayer.Models.User", b =>
                 {
                     b.Property<int>("UserId")
@@ -360,20 +469,66 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
                 {
-                    b.HasOne("BusinessObjectsLayer.Models.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId");
+                    b.HasOne("BusinessObjectsLayer.Models.User", "Author")
+                        .WithMany("Posts")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("CreatedBy");
+                    b.HasOne("BusinessObjectsLayer.Models.Post", "ParentPost")
+                        .WithMany("ChildPosts")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("ParentPost");
                 });
 
-            modelBuilder.Entity("BusinessObjectsLayer.Models.PostContent", b =>
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostComment", b =>
                 {
+                    b.HasOne("BusinessObjectsLayer.Models.PostComment", "ParentPost")
+                        .WithMany("ChildPostComments")
+                        .HasForeignKey("ParentId");
+
                     b.HasOne("BusinessObjectsLayer.Models.Post", "Post")
-                        .WithMany("PostContents")
-                        .HasForeignKey("PostId");
+                        .WithMany("PostComments")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParentPost");
 
                     b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostMeta", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Post", "Post")
+                        .WithMany("PostMetas")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostTag", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Post", "Post")
+                        .WithMany("PostTags")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.Tag", "Tag")
+                        .WithMany("PostTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
@@ -463,7 +618,18 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
                 {
-                    b.Navigation("PostContents");
+                    b.Navigation("ChildPosts");
+
+                    b.Navigation("PostComments");
+
+                    b.Navigation("PostMetas");
+
+                    b.Navigation("PostTags");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostComment", b =>
+                {
+                    b.Navigation("ChildPostComments");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
@@ -478,8 +644,15 @@ namespace BusinessObjectsLayer.Migrations
                     b.Navigation("QuestionQuizzes");
                 });
 
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Tag", b =>
+                {
+                    b.Navigation("PostTags");
+                });
+
             modelBuilder.Entity("BusinessObjectsLayer.Models.User", b =>
                 {
+                    b.Navigation("Posts");
+
                     b.Navigation("Quizzes");
 
                     b.Navigation("RefreshTokens");
