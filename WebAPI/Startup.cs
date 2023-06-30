@@ -153,29 +153,30 @@ namespace WebAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "/swagger/{documentName}/swagger.json";
+            });
+            /*app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1")
+
+            ) ;*/
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1");
+
+                // Set the authorization options for Swagger UI
+                c.DocExpansion(DocExpansion.None);
+                c.DefaultModelsExpandDepth(-1);
+                c.EnableDeepLinking();
+                c.EnableValidator();
+                c.DisplayRequestDuration();
+                c.EnableFilter();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger(c =>
-                {
-                    c.RouteTemplate = "/swagger/{documentName}/swagger.json";
-                });
-                /*app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1")
-
-                ) ;*/
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPI v1");
-
-                    // Set the authorization options for Swagger UI
-                    c.DocExpansion(DocExpansion.None);
-                    c.DefaultModelsExpandDepth(-1);
-                    c.EnableDeepLinking();
-                    c.EnableValidator();
-                    c.DisplayRequestDuration();
-                    c.EnableFilter();
-                });
-
+               
             }
             app.UseCors(builder =>
             {
