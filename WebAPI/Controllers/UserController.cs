@@ -94,5 +94,57 @@ namespace WebAPI.Controllers
                 Data = null
             });
         }
+        [HttpGet("getTopTenUser")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Get top ten user by total score")]
+        public async Task<IActionResult> GetTopTenUsers()
+        {
+            var users = await _userRepository.GetTopTenUsers();
+            List<GetRankByResponse> res = new List<GetRankByResponse>();
+            foreach (var user in users)
+            {
+                GetRankByResponse rank = new GetRankByResponse { 
+                    Email = user.Email,
+                    Name = user.Name,
+                    Score = (int)user.TotalScore
+                };
+            }
+            return Ok(new ResponseObject
+            {
+                Message = "Get list top ten user successfully",
+                Data = res
+            });
+        }
+        [HttpGet("getTopTenUsersByMonth")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Get top ten user by total score")]
+        public async Task<IActionResult> GetTopTenUsersByMonth()
+        {
+            List<GetRankByResponse> res = new List<GetRankByResponse>();
+            List<dynamic> topUsers = await _userRepository.GetTopTenUsersByMonth();
+            foreach (dynamic user in topUsers)
+            {
+                GetRankByResponse rank = new GetRankByResponse
+                {
+                    Name = user.User.Name,
+                    Email = user.User.Email,
+                    Score = user.TotalScore
+                };
+                res.Add(rank);
+            }
+            if(res.Count == 0)
+            {
+                return BadRequest(new ResponseObject
+                {
+                    Message = "List null",
+                    Data = ""
+                });
+            }
+            return Ok(new ResponseObject
+            {
+                Message = "Get the list of top 10 users by month successfully",
+                Data = res
+            });
+        }
     }
 }

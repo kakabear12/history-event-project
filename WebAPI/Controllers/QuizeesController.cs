@@ -10,6 +10,7 @@ using Repositories.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
@@ -27,6 +28,22 @@ namespace WebAPI.Controllers
             this.quizRepository = quizRepository;
             this.mapper = mapper;
             this.userRepository = userRepository;
+        }
+        private int UserID => int.Parse(FindClaim(ClaimTypes.NameIdentifier));
+        private string FindClaim(string claimName)
+        {
+
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+
+            var claim = claimsIdentity.FindFirst(claimName);
+
+            if (claim == null)
+            {
+                return null;
+            }
+
+            return claim.Value;
+
         }
         [HttpPost("createQuiz")]
         [Authorize(Roles = "Member")]
@@ -85,7 +102,27 @@ namespace WebAPI.Controllers
                 Message = "Get result of quiz successfully",
                 Data = res
             });
-
+        }
+        [HttpGet("getQuizzessByUserId")]
+        [Authorize(Roles = "Member")]
+        [SwaggerOperation(Summary = "For get list quiz by user id")]
+        public async Task<IActionResult> GetQuizzessByUserId()
+        {
+            var quizzess = await quizRepository.GetAllQuizsByUserId(UserID);
+            if(quizzess.Count() == 0)
+            {
+                return BadRequest(new ResponseObject
+                {
+                    Message = "List null",
+                    Data = null
+                });
+            }
+            var res = mapper.Map<List<QuizResponse>>(quizzess);
+            return Ok(new ResponseObject
+            {
+                Message = "Get all quiz by user id successfully",
+                Data = res
+            });
         }
 
     }

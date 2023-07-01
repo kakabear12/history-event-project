@@ -83,5 +83,15 @@ namespace Repositories
         {
             await userDAO.UpdateRole(id, role);
         }
+
+        public async Task<object> GetTopTenUsersByMonth()
+        {
+            return await userDAO.GetTopTenUsersByMonth();
+        }
+
+        public async Task<List<User>> GetTopTenUsers()
+        {
+            return await userDAO.GetTopTenUsers();
+        }
     }
 }
