@@ -80,5 +80,52 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+
+
+        [HttpGet("{postId}/events")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For get events of a specific post")]
+        public async Task<ActionResult<ResponseObject<IEnumerable<EventResponseModel>>>> GetEventsByPostId(int postId)
+        {
+            var response = await _eventService.GetEventsByPostId(postId);
+            return Ok(response);
+        }
+
+        [HttpPost("{postId}/events")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For create an event for a specific post")]
+        public async Task<ActionResult<ResponseObject<EventResponseModel>>> CreateEventForPost(int postId, EventRequestModel eventModel)
+        {
+            var response = await _eventService.CreateEventForPost(postId, eventModel);
+            return Ok(response);
+        }
+
+        [HttpPut("{postId}/events/{eventId}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For update an event of a specific post")]
+        public async Task<ActionResult<ResponseObject<EventResponseModel>>> UpdateEventForPost(int postId, int eventId, EventRequestModel eventModel)
+        {
+            var response = await _eventService.UpdateEventForPost(postId, eventId, eventModel);
+            if (response.Data == null)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpDelete("{postId}/events/{eventId}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For delete an event from a specific post")]
+        public async Task<ActionResult<ResponseObject<bool>>> DeleteEventFromPost(int postId, int eventId)
+        {
+            var response = await _eventService.DeleteEventFromPost(postId, eventId);
+            if (!response.Data)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

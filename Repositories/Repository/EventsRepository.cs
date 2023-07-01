@@ -20,5 +20,9 @@ namespace Repositories.Repository
         }
 
         // Implement any additional methods specific to the EventsRepository here
+        public async Task<IEnumerable<Event>> GetEventsByPostId(int postId)
+        {
+            return await _dbSet.Where(e => e.Posts.Any(p => p.PostId == postId)).ToListAsync();
+        }
     }
 }
