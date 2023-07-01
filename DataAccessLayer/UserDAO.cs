@@ -188,7 +188,7 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
-        public async Task<List<object>> GetTopTenUsersByMonth()
+        public async Task<List<dynamic>> GetTopTenUsersByMonth()
         {
             try
             {
