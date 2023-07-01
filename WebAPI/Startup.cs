@@ -185,19 +185,14 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
                
             }
-            app.UseCors(builder =>
-            {
-                builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-            });
+           
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
 
             app.UseRouting();
-           
 
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
