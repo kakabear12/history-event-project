@@ -30,11 +30,13 @@ namespace Repositories.Service
     public class EventService : IEventService
     {
         private readonly EventsRepository _eventRepository;
+        private readonly PostRepository _postRepository;
         private readonly IMapper _mapper;
 
-        public EventService(EventsRepository eventRepository, IMapper mapper)
+        public EventService(EventsRepository eventRepository,PostRepository postRepository, IMapper mapper)
         {
             _eventRepository = eventRepository;
+            _postRepository = postRepository;
             _mapper = mapper;
         }
 
@@ -142,16 +144,25 @@ namespace Repositories.Service
 
         public async Task<ResponseObject<EventResponseModel>> CreateEventForPost(int postId, EventRequestModel eventModel)
         {
+
+            // Find the existing post with the given postId
+            var postEntity = await _postRepository.GetById(postId);
+            if (postEntity == null)
+            {
+                return new ResponseObject<EventResponseModel>
+                {
+                    Message = "Post not found",
+                    Data = null
+                };
+            }
             var eventEntity = _mapper.Map<Event>(eventModel);
 
-            // Assign the post by setting the PostId property
-            eventEntity.Posts = new List<Post> { new Post { PostId = postId } };
-
-            // Add the related Post entity to the eventEntity
-            foreach (var post in eventEntity.Posts)
+            if (eventEntity.Posts == null)
             {
-                eventEntity.Posts.Add(post);
+                eventEntity.Posts = new List<Post>();
             }
+            // Add the post to the event's collection of posts
+            eventEntity.Posts.Add(postEntity);
 
             await _eventRepository.AddAsync(eventEntity);
 
@@ -162,6 +173,9 @@ namespace Repositories.Service
                 Data = eventResponseModel
             };
         }
+
+
+
 
 
 
