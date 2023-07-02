@@ -43,6 +43,10 @@ namespace DataAccessLayer
         {
             try
             {
+                var quiz = await context.Events.SingleOrDefaultAsync(c => c.EventId == q.Event.EventId);
+                if(quiz == null) {
+                    throw new CustomException("Event not found");
+                }
                 if(context.Questions.Any(c=> c.QuestionText == q.QuestionText)) {
                     throw new CustomException("The question had exised");
                 }
