@@ -4,14 +4,16 @@ using BusinessObjectsLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    partial class HistoryEventDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230702100740_HistoryDb2")]
+    partial class HistoryDb2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,6 +139,9 @@ namespace BusinessObjectsLayer.Migrations
                     b.Property<string>("Directory")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Extension")
                         .HasColumnType("nvarchar(max)");
 
@@ -150,11 +155,17 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PostMetaId")
+                        .HasColumnType("int");
+
                     b.Property<float>("Size")
                         .HasColumnType("real");
 
                     b.Property<string>("Small")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Thumb")
                         .HasColumnType("nvarchar(max)");
@@ -170,6 +181,12 @@ namespace BusinessObjectsLayer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("PostMetaId");
+
+                    b.HasIndex("TagId");
 
                     b.ToTable("Image");
                 });
@@ -500,21 +517,6 @@ namespace BusinessObjectsLayer.Migrations
                     b.ToTable("CategoryPost");
                 });
 
-            modelBuilder.Entity("EventImage", b =>
-                {
-                    b.Property<int>("EventsEventId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("ImagesId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("EventsEventId", "ImagesId");
-
-                    b.HasIndex("ImagesId");
-
-                    b.ToTable("EventImage");
-                });
-
             modelBuilder.Entity("EventPost", b =>
                 {
                     b.Property<int>("EventsEventId")
@@ -530,36 +532,6 @@ namespace BusinessObjectsLayer.Migrations
                     b.ToTable("EventPost");
                 });
 
-            modelBuilder.Entity("ImagePostMeta", b =>
-                {
-                    b.Property<long>("ImagesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("PostMetasId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ImagesId", "PostMetasId");
-
-                    b.HasIndex("PostMetasId");
-
-                    b.ToTable("ImagePostMeta");
-                });
-
-            modelBuilder.Entity("ImageTag", b =>
-                {
-                    b.Property<long>("ImagesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ImagesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ImageTag");
-                });
-
             modelBuilder.Entity("BusinessObjectsLayer.Models.Answer", b =>
                 {
                     b.HasOne("BusinessObjectsLayer.Models.Question", "Question")
@@ -567,6 +539,33 @@ namespace BusinessObjectsLayer.Migrations
                         .HasForeignKey("QuestionId");
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Image", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Event", "Event")
+                        .WithMany("Images")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.PostMeta", "PostMeta")
+                        .WithMany("Images")
+                        .HasForeignKey("PostMetaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.Tag", "Tag")
+                        .WithMany("Images")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("PostMeta");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
@@ -698,21 +697,6 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EventImage", b =>
-                {
-                    b.HasOne("BusinessObjectsLayer.Models.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventsEventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObjectsLayer.Models.Image", null)
-                        .WithMany()
-                        .HasForeignKey("ImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EventPost", b =>
                 {
                     b.HasOne("BusinessObjectsLayer.Models.Event", null)
@@ -728,38 +712,10 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ImagePostMeta", b =>
-                {
-                    b.HasOne("BusinessObjectsLayer.Models.Image", null)
-                        .WithMany()
-                        .HasForeignKey("ImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObjectsLayer.Models.PostMeta", null)
-                        .WithMany()
-                        .HasForeignKey("PostMetasId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ImageTag", b =>
-                {
-                    b.HasOne("BusinessObjectsLayer.Models.Image", null)
-                        .WithMany()
-                        .HasForeignKey("ImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BusinessObjectsLayer.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("BusinessObjectsLayer.Models.Event", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("Questions");
                 });
 
@@ -779,6 +735,11 @@ namespace BusinessObjectsLayer.Migrations
                     b.Navigation("ChildPostComments");
                 });
 
+            modelBuilder.Entity("BusinessObjectsLayer.Models.PostMeta", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("BusinessObjectsLayer.Models.Question", b =>
                 {
                     b.Navigation("Answers");
@@ -793,6 +754,8 @@ namespace BusinessObjectsLayer.Migrations
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Tag", b =>
                 {
+                    b.Navigation("Images");
+
                     b.Navigation("PostTags");
                 });
 

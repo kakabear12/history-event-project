@@ -78,6 +78,8 @@ namespace WebAPI
             services.AddScoped<PostCommentRepository>();
             services.AddScoped<IPostCommentService, PostCommentService>();
 
+            services.AddScoped<ImageRepository>();
+            services.AddScoped<IImageService, ImageService>();
 
             services.AddCors();
 

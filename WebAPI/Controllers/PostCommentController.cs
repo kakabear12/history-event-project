@@ -34,8 +34,7 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("{commentId}")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{commentId}")]       
         [SwaggerOperation(Summary = "Get a specific post comment by ID")]
         public async Task<ActionResult<ResponseObject<PostCommentResponseModel>>> GetPostCommentById(int commentId)
         {
@@ -44,7 +43,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor, Member, Admin")]
         [SwaggerOperation(Summary = "Create a new post comment")]
         public async Task<ActionResult<ResponseObject<PostCommentResponseModel>>> CreatePostComment([FromBody] PostCommentRequestModel request)
         {
@@ -53,7 +52,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{commentId}")]
-        [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor, Member, Admin")]
         [SwaggerOperation(Summary = "Update a post comment by ID")]
         public async Task<ActionResult<ResponseObject<PostCommentResponseModel>>> UpdatePostComment(int commentId, [FromBody] PostCommentRequestModel request)
         {
@@ -62,7 +61,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("{commentId}")]
-        [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor, Member, Admin")]
         [SwaggerOperation(Summary = "Delete a post comment by ID")]
         public async Task<ActionResult<ResponseObject<bool>>> DeletePostComment(int commentId)
         {
@@ -70,8 +69,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{commentId}/childcomments")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{commentId}/childcomments")]      
         [SwaggerOperation(Summary = "Get all child comments of a post comment")]
         public async Task<ActionResult<ResponseObject<IEnumerable<PostCommentResponseModel>>>> GetAllChildComments(int commentId)
         {
@@ -79,8 +77,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{commentId}/childcomments/{childCommentId}")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{commentId}/childcomments/{childCommentId}")]        
         [SwaggerOperation(Summary = "Get a specific child comment of a post comment")]
         public async Task<ActionResult<ResponseObject<PostCommentResponseModel>>> GetChildCommentById(int commentId, int childCommentId)
         {
@@ -89,7 +86,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("{commentId}/childcomments")]
-        [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor, Member, Admin")]
         [SwaggerOperation(Summary = "Create a new child comment for a post comment")]
         public async Task<ActionResult<ResponseObject<PostCommentResponseModel>>> CreateChildComment(int commentId, [FromBody] PostCommentRequestModel request)
         {
@@ -98,7 +95,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{commentId}/childcomments/{childCommentId}")]
-        [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor, Member, Admin")]
         [SwaggerOperation(Summary = "Update a child comment of a post comment")]
         public async Task<ActionResult<ResponseObject<PostCommentResponseModel>>> UpdateChildComment(int commentId, int childCommentId, [FromBody] PostCommentRequestModel request)
         {
@@ -108,7 +105,7 @@ namespace WebAPI.Controllers
 
 
         [HttpDelete("{commentId}/childcomments/{childCommentId}")]
-        [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor, Member, Admin")]
         [SwaggerOperation(Summary = "Delete a child comment of a post comment")]
         public async Task<ActionResult<ResponseObject<bool>>> DeleteChildComment(int commentId, int childCommentId)
         {

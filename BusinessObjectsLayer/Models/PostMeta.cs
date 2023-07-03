@@ -20,5 +20,6 @@ namespace BusinessObjectsLayer.Models
         public string Contents { get; set; }
         [ForeignKey("PostId")]
         public virtual Post Post { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
     }
 }

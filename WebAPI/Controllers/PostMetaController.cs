@@ -25,8 +25,7 @@ namespace WebAPI.Controllers
 
         
 
-        [HttpGet("{postId}/{metaId}")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{postId}/{metaId}")]       
         [SwaggerOperation(Summary = "Get post meta by post ID and meta ID")]
         public async Task<ActionResult<ResponseObject<PostMetaResponseModel>>> GetPostMetaById(int postId, int metaId)
         {
@@ -82,8 +81,7 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet]
-        [Authorize(Roles = "Editor")]
+        [HttpGet]        
         [SwaggerOperation(Summary = "Get all post metas")]
         public async Task<ActionResult<ResponseObject<IEnumerable<PostMetaResponseModel>>>> GetAllPostMeta()
         {
@@ -92,8 +90,7 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("post/{postId}/meta")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("post/{postId}/meta")]       
         [SwaggerOperation(Summary = "Get post meta by post ID")]
         public async Task<ActionResult<ResponseObject<IEnumerable<PostMetaResponseModel>>>> GetPostMetaByPostId(int postId)
         {

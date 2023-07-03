@@ -20,7 +20,10 @@ namespace BusinessObjectsLayer.Models
         public string Slug { get; set; }
         [Required]
         public string Contents { get; set; }
-       
+
+        public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<PostTag> PostTags { get; set; }
+
+        
     }
 }

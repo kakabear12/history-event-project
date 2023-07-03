@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Editor")]
+       
         [SwaggerOperation(Summary = "For get envent by id")]
         public async Task<ActionResult<ResponseObject<EventResponseModel>>> GetEventById(int id)
         {
@@ -83,7 +83,7 @@ namespace WebAPI.Controllers
 
 
         [HttpGet("{postId}/events")]
-        [Authorize(Roles = "Editor")]
+       
         [SwaggerOperation(Summary = "For get events of a specific post")]
         public async Task<ActionResult<ResponseObject<IEnumerable<EventResponseModel>>>> GetEventsByPostId(int postId)
         {

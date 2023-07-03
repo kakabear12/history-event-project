@@ -26,8 +26,7 @@ namespace WebAPI.Controllers
            
         }
 
-        [HttpGet("{id}")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{id}")]        
         [SwaggerOperation(Summary = "For get post by id")]
         public async Task<ActionResult<ResponseObject<PostResponseModel>>> GetPostById(int id)
         {
@@ -40,8 +39,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Editor")]
+        [HttpGet]      
         [SwaggerOperation(Summary = "For get list of posts")]
         public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> GetAllPosts()
         {

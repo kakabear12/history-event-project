@@ -23,8 +23,7 @@ namespace WebAPI.Controllers
         {
             _tagService = tagService;
         }
-        [HttpGet]
-        [Authorize(Roles = "Editor")]
+        [HttpGet]     
         [SwaggerOperation(Summary = "Get all tags")]
         public async Task<ActionResult<ResponseObject<IEnumerable<TagResponseModel>>>> GetAllTags()
         {
@@ -32,8 +31,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{tagId}")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{tagId}")]        
         [SwaggerOperation(Summary = "Get tag by ID")]
         public async Task<ActionResult<ResponseObject<TagResponseModel>>> GetTagById(int tagId)
         {
@@ -89,8 +87,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{tagId}/posts")]
-        [Authorize(Roles = "Editor")]
+        [HttpGet("{tagId}/posts")]       
         [SwaggerOperation(Summary = "Get posts by tag ID")]
         public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> GetPostsByTagId(int tagId)
         {

@@ -18,6 +18,7 @@ namespace BusinessObjectsLayer.Models
         [Required]
         public string Description { get; set; }
 
+        public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<Post> Posts { get; set; }
         public virtual ICollection<Question> Questions { get; set; }
     }

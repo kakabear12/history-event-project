@@ -9,23 +9,20 @@ using System.Threading.Tasks;
 
 namespace Repositories.Repository
 {
-    public class EventsRepository : Repository<Event>
+    
+    public class ImageRepository : Repository<Image>
     {
-        private readonly DbSet<Event> _dbSet;
+        private readonly DbSet<Image> _dbSet;
         private readonly HistoryEventDBContext _context;
-        public EventsRepository(HistoryEventDBContext context) : base(context)
+        public ImageRepository(HistoryEventDBContext context) : base(context)
         {
             _context = context;
-            _dbSet = _context.Set<Event>();
+            _dbSet = _context.Set<Image>();
         }
 
         // Implement any additional methods specific to the EventsRepository here
-        public async Task<IEnumerable<Event>> GetEventsByPostId(int postId)
-        {
-            return await _dbSet.Where(e => e.Posts.Any(p => p.PostId == postId)).ToListAsync();
-        }
-         
-       
+        
+
 
 
     }

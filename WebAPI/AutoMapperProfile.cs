@@ -53,7 +53,9 @@ namespace WebAPI
             CreateMap<PostCommentRequestModel, PostComment>();
             CreateMap<PostComment, PostCommentResponseModel>();
 
-
+            //Image
+            CreateMap<ImageRequestModel, Image>();
+            CreateMap<Image, ImageResponseModel>();
         }
     }
 }
