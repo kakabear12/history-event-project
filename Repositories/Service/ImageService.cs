@@ -272,6 +272,9 @@ namespace Repositories.Service
                 imageEntity.Url = blobClient.Uri.ToString();
             }
 
+            // Check if existingEvent.Images is null and initialize a new list if it is null
+            existingEvent.Images ??= new List<Image>();
+
             existingEvent.Images.Add(imageEntity);
             await _eventRepository.UpdateAsync(existingEvent);
 
@@ -282,6 +285,7 @@ namespace Repositories.Service
                 Data = eventResponseModel
             };
         }
+
 
         public async Task<ResponseObject<PostMetaResponseModel>> AddImageToPostMeta(int postId, int metaId, ImageRequestModel imageModel, IFormFile imageFile)
         {
@@ -388,5 +392,6 @@ namespace Repositories.Service
                 Data = tagResponseModel
             };
         }
+
     }
 }
