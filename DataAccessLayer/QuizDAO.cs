@@ -180,6 +180,19 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
+        public async Task<List<Quiz>> GetQuizzessByUserId(int userId)
+        {
+            try
+            {
+                var quizzess = await context.Quizzes.Where(c=> c.User.UserId == userId)
+                    .OrderByDescending(c=> c.EndTime)
+                    .ToListAsync();
+                return quizzess;
+            }catch(Exception ex)
+            {
+                throw new CustomException(ex.ToString());
+            }
+        }
         private List<Question> GetRandomQuestions(List<Question> questions, int number)
         {
             Random random = new Random();

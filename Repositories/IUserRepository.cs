@@ -20,5 +20,7 @@ namespace Repositories
         Task DeleteUserAsync(int id);
         Task<User> UpdateUserAsync(User user);
         Task UpdateRoleUser(int id, string role);
+        Task<dynamic> GetTopTenUsersByMonth();
+        Task<List<User>> GetTopTenUsers();
     }
 }

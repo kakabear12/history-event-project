@@ -21,6 +21,11 @@ namespace Repositories
             return await quizDAO.CreateQuiz(eventId, quiz);
         }
 
+        public async Task<List<Quiz>> GetAllQuizsByUserId(int userId)
+        {
+            return await quizDAO.GetQuizzessByUserId(userId);
+        }
+
         public async Task<Quiz> GetQuizById(int quizId)
         {
            return await quizDAO.GetQuizById(quizId);

@@ -16,7 +16,7 @@ namespace DataAccessLayer
     public class UserDAO
     {
         private readonly HistoryEventDBContext context;
-        public UserDAO(HistoryEventDBContext context) {  this.context = context; }
+        public UserDAO(HistoryEventDBContext context) { this.context = context; }
         public string Register(User user)
         {
             try
@@ -30,12 +30,12 @@ namespace DataAccessLayer
                 string passHash = Convert.ToBase64String(byteArray);
                 byte[] byteArray2 = passwordSalt;
                 string passSalt = Convert.ToBase64String(byteArray2);
-                
+
 
                 user.Password = passSalt + " " + passHash;
                 context.Users.Add(user);
                 context.SaveChanges();
-                return  "OK";
+                return "OK";
             }
             catch (Exception ex) {
                 throw new Exception(ex.Message);
@@ -68,7 +68,7 @@ namespace DataAccessLayer
                     throw new CustomException("Email is not valid.");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new CustomException(ex.Message);
             }
@@ -112,7 +112,7 @@ namespace DataAccessLayer
             {
                 return await context.Users.ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new CustomException(ex.Message);
             }
@@ -122,7 +122,7 @@ namespace DataAccessLayer
             try
             {
                 var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
-                if(user == null) {
+                if (user == null) {
                     throw new CustomException("User not found.");
                 }
                 context.Users.Remove(user);
@@ -137,14 +137,14 @@ namespace DataAccessLayer
         {
             try
             {
-                var userUpdate = await context.Users.FirstOrDefaultAsync(u=> u.UserId == user.UserId);
-                if(userUpdate == null)
+                var userUpdate = await context.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId);
+                if (userUpdate == null)
                 {
                     throw new CustomException("User not found.");
                 }
-                if(user.Email != userUpdate.Email)
+                if (user.Email != userUpdate.Email)
                 {
-                    if(EmailExists(user.Email)) {
+                    if (EmailExists(user.Email)) {
                         throw new CustomException("Email was existed");
                     }
                 }
@@ -154,7 +154,7 @@ namespace DataAccessLayer
                 return userUpdate;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new CustomException(ex.Message);
             }
@@ -164,11 +164,11 @@ namespace DataAccessLayer
             try
             {
                 var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
-                if(user == null)
+                if (user == null)
                 {
                     throw new CustomException("User not found");
                 }
-                if(Role.Admin.ToString().Contains(role)) {
+                if (Role.Admin.ToString().Contains(role)) {
                     user.Role = Role.Admin;
                 } else if (Role.Member.ToString().Contains(role))
                 {
@@ -183,7 +183,47 @@ namespace DataAccessLayer
                 }
 
                 await context.SaveChangesAsync();
-            }catch(Exception ex)
+            } catch (Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+        public async Task<List<dynamic>> GetTopTenUsersByMonth()
+        {
+            try
+            {
+                // Xác định thời gian bắt đầu và kết thúc của tháng hiện tại
+                DateTime now = DateTime.Now;
+                DateTime startOfMonth = new DateTime(now.Year, now.Month, 1);
+                DateTime endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+                // Truy vấn danh sách các user và tổng điểm từ các quiz của mỗi user trong tháng này
+                var topUsers = await context.Users
+                    .Select(u => new
+                    {
+                        User = u,
+                        TotalScore = u.Quizzes
+                            .Where(q => q.StartTime >= startOfMonth && q.EndTime <= endOfMonth)
+                            .Sum(q => q.Score)
+                    })
+                    .OrderByDescending(u => u.TotalScore)
+                    .Take(10)
+                    .ToListAsync();
+                return topUsers.Cast<object>().ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+        public async Task<List<User>> GetTopTenUsers()
+        {
+            try
+            {
+                var users = await context.Users.OrderByDescending(u => u.TotalScore)
+                    .Take(10)
+                    .ToListAsync();
+                return users;
+            }catch (Exception ex)
             {
                 throw new CustomException(ex.Message);
             }

@@ -13,5 +13,6 @@ namespace Repositories.Interfaces
         Task<Quiz> GetQuizToDo(int quizId);
         Task GetResultQuiz(int quizId, int questId, int anserId);
         Task<Quiz> GetQuizById(int quizId);
+        Task<List<Quiz>> GetAllQuizsByUserId(int userId);
     }
 }
