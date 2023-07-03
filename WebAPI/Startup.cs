@@ -1,5 +1,6 @@
 using BusinessObjectsLayer.Models;
 using DataAccessLayer;
+using DTOs.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -193,7 +194,8 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
                
             }
-           
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
