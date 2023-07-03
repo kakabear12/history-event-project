@@ -121,11 +121,34 @@ namespace DataAccessLayer
         {
             try
             {
-                var user = await context.Users.FirstOrDefaultAsync(u => u.UserId == id);
-                if (user == null) {
+                var user = await context.Users.Include(u => u.Quizzes)
+                                              .Include(u => u.RefreshTokens)
+                                              .FirstOrDefaultAsync(u => u.UserId == id);
+
+                if (user == null)
+                {
                     throw new CustomException("User not found.");
                 }
+
+                // Lấy danh sách tất cả các bài kiểm tra của người dùng
+                var quizzes = user.Quizzes.ToList();
+
+                // Xóa tất cả các bài kiểm tra và liên kết của chúng
+                foreach (var quiz in quizzes)
+                {
+                    context.QuestionQuizzes.RemoveRange(quiz.QuestionQuizzes);
+                    context.Quizzes.Remove(quiz);
+                }
+
+                // Lấy danh sách tất cả các token làm mới của người dùng
+                var refreshTokens = user.RefreshTokens.ToList();
+
+                // Xóa tất cả các token làm mới
+                context.RefreshTokens.RemoveRange(refreshTokens);
+
+                // Xóa người dùng
                 context.Users.Remove(user);
+
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -133,6 +156,7 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
+
         public async Task<User> UpdateUserAsync(User user)
         {
             try

@@ -13,7 +13,9 @@ namespace DTOs.Request
         [EmailAddress] 
         public string Email { get; set; }
         [Required(ErrorMessage = "Password is required field.")]
+        [StringLength(6, ErrorMessage = "Password must be at least 6 characters long.")]
         public string Password { get; set; }
+
         [Required(ErrorMessage = "Name is required field.")]
         [MaxLength(60, ErrorMessage = "Name maximum is 60 characters.")]
         public string Name { get; set; }
