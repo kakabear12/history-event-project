@@ -11,8 +11,7 @@ namespace DTOs.Request
     {
         private int numberQuestion;
         private int time;
-        [Required(ErrorMessage = "UserId is a required field")]
-        public int UserId { get; set; }
+     
         [Required]
         public int NumberQuestion
         {

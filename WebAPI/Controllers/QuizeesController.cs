@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
                 return BadRequest(ModelState);  
             }
             var quiz = mapper.Map<Quiz>(request);
-            var user = await userRepository.GetCurrentUserById(request.UserId);
+            var user = await userRepository.GetCurrentUserById(UserID);
             quiz.User = user;
             var createQuiz = await quizRepository.CreateQuiz(eventId, quiz);
             var res = mapper.Map<QuizResponse>(createQuiz);
