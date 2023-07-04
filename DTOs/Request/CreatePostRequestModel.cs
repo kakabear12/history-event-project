@@ -10,8 +10,7 @@ namespace DTOs.Request
     public class CreatePostRequestModel
     {
       
-        [Required(ErrorMessage = "AuthorId is a required field")]
-        public int AuthorId { get; set; }
+        
 
         public int? ParentId { get; set; }
 

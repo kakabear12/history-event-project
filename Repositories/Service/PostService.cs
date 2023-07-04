@@ -2,10 +2,12 @@
 using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
+using Microsoft.AspNetCore.Http;
 using Repositories.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,9 +18,9 @@ namespace Repositories.Service
     {
         Task<ResponseObject<PostResponseModel>> GetPostById(int id);
         Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPosts();
-        Task<ResponseObject<PostResponseModel>> CreatePost(CreatePostRequestModel request);
-        Task<ResponseObject<bool>> UpdatePost(int id, UpdatePostRequestModel request);
-        Task<ResponseObject<bool>> DeletePost(DeletePostRequestModel request);
+        Task<ResponseObject<PostResponseModel>> CreatePost(User user, CreatePostRequestModel request);
+        Task<ResponseObject<bool>> UpdatePost(User user, int id, UpdatePostRequestModel request);
+        Task<ResponseObject<bool>> DeletePost(User user, DeletePostRequestModel request);
 
         Task<ResponseObject<PostResponseModel>> GetPostsByAuthorId(int authorId);
     }
@@ -26,18 +28,24 @@ namespace Repositories.Service
     public class PostService : IPostService
     {
         private readonly PostRepository _postRepository;
+       
         private readonly IMapper _mapper;
 
-        public PostService(PostRepository postRepository, IMapper mapper)
+        public PostService(PostRepository postRepository,  IMapper mapper)
         {
             _postRepository = postRepository;
+            
             _mapper = mapper;
         }
-
-        public async Task<ResponseObject<PostResponseModel>> CreatePost(CreatePostRequestModel request)
+        
+        public async Task<ResponseObject<PostResponseModel>> CreatePost(User user,  CreatePostRequestModel request)
         {
             var postEntity = _mapper.Map<Post>(request);
+            postEntity.Author = user;
+
             await _postRepository.AddAsync(postEntity);
+
+
 
             var postResponseModel = _mapper.Map<PostResponseModel>(postEntity);
             return new ResponseObject<PostResponseModel>
@@ -47,10 +55,10 @@ namespace Repositories.Service
             };
         }
 
-        public async Task<ResponseObject<bool>> UpdatePost(int id, UpdatePostRequestModel request)
+        public async Task<ResponseObject<bool>> UpdatePost(User user, int id, UpdatePostRequestModel request)
         {
             var post = await _postRepository.GetById(id);
-
+            post.Author = user;
             if (post == null)
             {
                 return new ResponseObject<bool>
@@ -71,10 +79,10 @@ namespace Repositories.Service
             };
         }
 
-        public async Task<ResponseObject<bool>> DeletePost(DeletePostRequestModel request)
+        public async Task<ResponseObject<bool>> DeletePost(User user, DeletePostRequestModel request)
         {
             var post = await _postRepository.GetById(request.PostId);
-
+            post.Author = user;
             if (post == null)
             {
                 return new ResponseObject<bool>

@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using Repositories.Service;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,13 +22,29 @@ namespace WebAPI.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
-       
-        public PostController (IPostService postService)
+        private readonly IUserRepository _userRepository;
+        public PostController (IUserRepository userRepository, IPostService postService)
         {
             _postService = postService;
+            _userRepository = userRepository;
            
         }
+        private int UserID => int.Parse(FindClaim(ClaimTypes.NameIdentifier));
+        private string FindClaim(string claimName)
+        {
 
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+
+            var claim = claimsIdentity.FindFirst(claimName);
+
+            if (claim == null)
+            {
+                return null;
+            }
+
+            return claim.Value;
+
+        }
         [HttpGet("{id}")]        
         [SwaggerOperation(Summary = "For get post by id")]
         public async Task<ActionResult<ResponseObject<PostResponseModel>>> GetPostById(int id)
@@ -52,10 +71,12 @@ namespace WebAPI.Controllers
         [SwaggerOperation(Summary = "For create post")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(ResponseObject<PostResponseModel>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request")]
-        public async Task<ActionResult<ResponseObject<PostResponseModel>>> CreatePost(CreatePostRequestModel request)
+        public async Task<ActionResult<ResponseObject<PostResponseModel>>> CreatePost( CreatePostRequestModel request)
         {
+            var user = await _userRepository.GetCurrentUserById(UserID);
+            
             request.Slug = GenerateSlug(request.Slug);
-            var response = await _postService.CreatePost(request);
+            var response = await _postService.CreatePost(user,request);
             return Ok(response);
         }
 
@@ -64,7 +85,8 @@ namespace WebAPI.Controllers
         [SwaggerOperation(Summary = "For update post by id")]
         public async Task<ActionResult<ResponseObject<bool>>> UpdatePost(int id, UpdatePostRequestModel request)
         {
-            var response = await _postService.UpdatePost(id, request);
+            var user = await _userRepository.GetCurrentUserById(UserID);
+            var response = await _postService.UpdatePost(user,id, request);
 
             if (!response.Data)
             {
@@ -80,12 +102,13 @@ namespace WebAPI.Controllers
         [SwaggerOperation(Summary = "For delete post by id")]
         public async Task<ActionResult<ResponseObject<bool>>> DeletePost(int id)
         {
+            var user = await _userRepository.GetCurrentUserById(UserID);
             var deleteRequest = new DeletePostRequestModel
             {
                 PostId = id
             };
 
-            var response = await _postService.DeletePost(deleteRequest);
+            var response = await _postService.DeletePost(user, deleteRequest);
             if (!response.Data)
             {
                 return NotFound(response);
