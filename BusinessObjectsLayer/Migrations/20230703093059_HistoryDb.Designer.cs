@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    [Migration("20230630051104_InitialDB")]
-    partial class InitialDB
+    [Migration("20230703093059_HistoryDb")]
+    partial class HistoryDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -115,6 +115,65 @@ namespace BusinessObjectsLayer.Migrations
                     b.HasKey("EventId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("BusinessObjectsLayer.Models.Image", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AltText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Caption")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Directory")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Medium")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Size")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Small")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Thumb")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Post", b =>
@@ -443,6 +502,21 @@ namespace BusinessObjectsLayer.Migrations
                     b.ToTable("CategoryPost");
                 });
 
+            modelBuilder.Entity("EventImage", b =>
+                {
+                    b.Property<int>("EventsEventId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ImagesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("EventsEventId", "ImagesId");
+
+                    b.HasIndex("ImagesId");
+
+                    b.ToTable("EventImage");
+                });
+
             modelBuilder.Entity("EventPost", b =>
                 {
                     b.Property<int>("EventsEventId")
@@ -456,6 +530,36 @@ namespace BusinessObjectsLayer.Migrations
                     b.HasIndex("PostsPostId");
 
                     b.ToTable("EventPost");
+                });
+
+            modelBuilder.Entity("ImagePostMeta", b =>
+                {
+                    b.Property<long>("ImagesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("PostMetasId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImagesId", "PostMetasId");
+
+                    b.HasIndex("PostMetasId");
+
+                    b.ToTable("ImagePostMeta");
+                });
+
+            modelBuilder.Entity("ImageTag", b =>
+                {
+                    b.Property<long>("ImagesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("TagsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImagesId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("ImageTag");
                 });
 
             modelBuilder.Entity("BusinessObjectsLayer.Models.Answer", b =>
@@ -596,6 +700,21 @@ namespace BusinessObjectsLayer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EventImage", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventsEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.Image", null)
+                        .WithMany()
+                        .HasForeignKey("ImagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EventPost", b =>
                 {
                     b.HasOne("BusinessObjectsLayer.Models.Event", null)
@@ -607,6 +726,36 @@ namespace BusinessObjectsLayer.Migrations
                     b.HasOne("BusinessObjectsLayer.Models.Post", null)
                         .WithMany()
                         .HasForeignKey("PostsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ImagePostMeta", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Image", null)
+                        .WithMany()
+                        .HasForeignKey("ImagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.PostMeta", null)
+                        .WithMany()
+                        .HasForeignKey("PostMetasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ImageTag", b =>
+                {
+                    b.HasOne("BusinessObjectsLayer.Models.Image", null)
+                        .WithMany()
+                        .HasForeignKey("ImagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BusinessObjectsLayer.Models.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

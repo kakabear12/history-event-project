@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Repositories;
 using Repositories.Service;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,13 +22,12 @@ namespace WebAPI.Controllers
     public class PostController : ControllerBase
     {
         private readonly IPostService _postService;
-       
-        public PostController (IPostService postService)
+        public PostController (IPostService postService, IUserRepository userRepository)
         {
             _postService = postService;
-           
+                       
         }
-
+        
         [HttpGet("{id}")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get post by id")]
@@ -55,7 +57,7 @@ namespace WebAPI.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Success", typeof(ResponseObject<PostResponseModel>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request")]
         public async Task<ActionResult<ResponseObject<PostResponseModel>>> CreatePost(CreatePostRequestModel request)
-        {
+        {                      
             request.Slug = GenerateSlug(request.Slug);
             var response = await _postService.CreatePost(request);
             return Ok(response);
