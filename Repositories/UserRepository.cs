@@ -93,5 +93,10 @@ namespace Repositories
         {
             return await userDAO.GetTopTenUsers();
         }
+
+        public async Task<List<User>> SearchUsers(string keyword)
+        {
+            return await userDAO.SearchUsers(keyword);
+        }
     }
 }

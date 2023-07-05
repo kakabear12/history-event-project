@@ -146,5 +146,26 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
+        [HttpGet("searchUser/{keyword}")]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "For search user by name")]
+        public async Task<IActionResult> SearchUsers(string keyword)
+        {
+            var users = await _userRepository.SearchUsers(keyword);
+            if(users.Count == 0)
+            {
+                return BadRequest(new ResponseObject
+                {
+                    Message = "List null",
+                    Data = null
+                });
+            }
+            var res = mapper.Map<List<UserReponse>>(users);
+            return Ok(new ResponseObject
+            {
+                Message = "Search successfully",
+                Data = res
+            });
+        }
     }
 }

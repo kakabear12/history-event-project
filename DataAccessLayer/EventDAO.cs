@@ -30,5 +30,20 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
+        public async Task<List<Event>> SearchEvents(string searchTerm)
+        {
+            try
+            {
+                var events = await context.Events
+                    .Where(u => u.EventName.Contains(searchTerm))
+                    .ToListAsync();
+
+                return events;
+            }
+            catch (Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
     }
 }

@@ -252,5 +252,22 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
+        public async Task<List<User>> SearchUsers(string searchTerm)
+        {
+            try
+            {
+                // Search for users whose name or email contains the specified search term
+                var users = await context.Users
+                    .Where(u => u.Name.Contains(searchTerm))
+                    .ToListAsync();
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
+
     }
 }

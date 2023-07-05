@@ -22,5 +22,6 @@ namespace Repositories
         Task UpdateRoleUser(int id, string role);
         Task<dynamic> GetTopTenUsersByMonth();
         Task<List<User>> GetTopTenUsers();
+        Task<List<User>> SearchUsers(string keyword);
     }
 }

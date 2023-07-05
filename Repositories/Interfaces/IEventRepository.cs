@@ -10,5 +10,6 @@ namespace Repositories.Interfaces
     public interface IEventRepository
     {
         Task<Event> GetEventById(int id);
+        Task<List<Event>> SearchEventsByName(string keyword);
     }
 }
