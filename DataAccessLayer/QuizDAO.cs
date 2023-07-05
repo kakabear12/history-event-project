@@ -161,7 +161,7 @@ namespace DataAccessLayer
                 {
                     throw new CustomException("Question not found");
                 }
-                if(quest.Answers.Any(c=> c.AnswerId == questId) == false)
+                if(quest.Answers.Any(c=> c.AnswerId == anserId) == false)
                 {
                     throw new CustomException("Answer not found");
                 }
