@@ -24,7 +24,7 @@ namespace Repositories
             return await eventDAO.GetEventById(id);
         }
 
-        public async Task<IEnumerable<Event>> SearchEventsByName(string keyword)
+        public async Task<List<Event>> SearchEventsByName(string keyword)
         {
             return await eventDAO.SearchEvents(keyword);
         }
