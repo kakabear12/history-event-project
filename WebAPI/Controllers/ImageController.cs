@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-       // [Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "Create an image")]
         public async Task<ActionResult<ResponseObject<ImageResponseModel>>> CreateImage([FromForm] ImageRequestModel imageModel, IFormFile imageFile)
         {
@@ -75,7 +75,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("postmeta/{postId}/meta/{metaId}")]
-        //[Authorize(Roles = "Editor")]
+        [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "Add an image to post meta")]
         public async Task<ActionResult<ResponseObject<PostMetaResponseModel>>> AddImageToPostMeta(int postId, int metaId, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
         {

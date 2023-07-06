@@ -45,9 +45,10 @@ namespace Repositories.Repository
 
         public async Task<IEnumerable<Post>> GetPostsByCategoryName(string categoryName)
         {
-            return await _dbSet.Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
-                               .Include(p => p.Categories)
+            return await _dbSet
                                .Where(p => p.Categories.Any(c => c.CategoryName == categoryName))
+                               .Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
+                               .Include(p => p.Categories)
                                .ToListAsync();
         }
 
