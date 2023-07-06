@@ -85,7 +85,7 @@ namespace WebAPI
             services.AddScoped<IImageService, ImageService>();
 
             services.AddScoped<UsersRepository>();
-
+            services.AddScoped<CatesgoryRepository>();
 
             services.AddCors(options =>
             {

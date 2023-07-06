@@ -21,7 +21,7 @@ namespace DTOs.Response
         public DateTime PublishedAt { get; set; }
         public string Content { get; set; }
 
-
+        public List<string> CategoryNames { get; set; }
         public List<PostMetaResponseModel> PostMetas { get; set; }
 
         

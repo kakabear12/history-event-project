@@ -41,16 +41,17 @@ namespace Repositories.Repository
                        .SingleOrDefaultAsync(p => p.PostId == id);
         }
 
-       
+
 
         public async Task<IEnumerable<Post>> GetPostsByCategoryName(string categoryName)
         {
             return await _dbSet
-                               .Where(p => p.Categories.Any(c => c.CategoryName == categoryName))
-                               .Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
-                               .Include(p => p.Categories)
-                               .ToListAsync();
+                .Where(p => p.Categories.Any(c => c.CategoryName.ToLower() == categoryName.ToLower()))
+                .Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
+                .Include(p => p.Categories)
+                .ToListAsync();
         }
+
 
         public async Task<IEnumerable<Post>> SearchPostsByMetaTitle(string keyword)
         {

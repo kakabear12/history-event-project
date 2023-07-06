@@ -40,6 +40,8 @@ namespace DTOs.Request
         [Required(ErrorMessage = "Content is a required field")]
         public string Content { get; set; }
 
+        public List<string> CategoryNames { get; set; }
+
         // Other properties as needed
     }
 

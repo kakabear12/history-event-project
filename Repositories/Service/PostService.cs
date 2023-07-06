@@ -4,10 +4,11 @@ using DTOs.Request;
 using DTOs.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using Repositories.Interfaces;
 using Repositories.Repository;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Repositories.Service
@@ -35,11 +36,13 @@ namespace Repositories.Service
        
         private readonly IMapper _mapper;
         private readonly UsersRepository _userRepository;
+        private readonly CatesgoryRepository _categoryRepository;
 
-        public PostService(PostRepository postRepository, UsersRepository userRepository,  IMapper mapper)
+        public PostService(PostRepository postRepository, UsersRepository userRepository, CatesgoryRepository categoryRepository, IMapper mapper)
         {
             _postRepository = postRepository;
             _userRepository = userRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
         
@@ -48,6 +51,29 @@ namespace Repositories.Service
             var postEntity = _mapper.Map<Post>(request);
             postEntity.Author = user;
 
+            // Tạo danh sách các đối tượng Category dựa trên CategoryNames
+            var categories = new List<Category>();
+            if (request.CategoryNames != null && request.CategoryNames.Any())
+            {
+                foreach (var categoryName in request.CategoryNames)
+                {
+                    var existingCategory = await _categoryRepository.GetCategoryByName(categoryName);
+                    if (existingCategory == null)
+                    {
+                        // Nếu CategoryName chưa tồn tại, tạo một đối tượng Category mới và lưu vào cơ sở dữ liệu
+                        var newCategory = new Category { CategoryName = categoryName };
+                        await _categoryRepository.AddAsync(newCategory);
+                        categories.Add(newCategory);
+                    }
+                    else
+                    {
+                        categories.Add(existingCategory);
+                    }
+                }
+            }
+            // Gán danh sách Category vào Post
+            postEntity.Categories = categories;
+
             await _postRepository.AddAsync(postEntity);
 
             var author = await _userRepository.GetUserById(user.UserId);
@@ -55,6 +81,7 @@ namespace Repositories.Service
             var postResponseModel = _mapper.Map<PostResponseModel>(postEntity);
 
             postResponseModel.AuthorName= author.Name;
+            postResponseModel.CategoryNames = request.CategoryNames;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post created successfully",
