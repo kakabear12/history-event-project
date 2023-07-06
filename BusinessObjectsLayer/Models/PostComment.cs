@@ -27,6 +27,9 @@ namespace BusinessObjectsLayer.Models
         [Required]
         public string Contents { get; set; }
 
+        public int UserId { get; set; }
+
+
         [ForeignKey("PostId")]
         public virtual Post Post { get; set; }
 
@@ -34,5 +37,9 @@ namespace BusinessObjectsLayer.Models
         public virtual PostComment ParentPost { get; set; }
 
         public virtual ICollection<PostComment> ChildPostComments { get; set; }
+
+        
+
+
     }
 }

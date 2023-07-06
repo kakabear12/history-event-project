@@ -15,6 +15,7 @@ namespace Repositories.Service
     {
         Task<ResponseObject<IEnumerable<PostMetaResponseModel>>> GetPostMetaByPostId(int PostId);
         Task<ResponseObject<PostMetaResponseModel>> GetPostMetaById(int postId, int Id);
+        Task<ResponseObject<PostMetaResponseModel>> GetPostMetaWithImageById( int Id);
         Task<ResponseObject<PostMetaResponseModel>> CreatePostMeta(PostMetaRequestModel request);
         Task<ResponseObject<PostMetaResponseModel>> UpdatePostMeta(int id, PostMetaRequestModel request);
         Task<ResponseObject<bool>> DeletePostMeta(int postId, int Id);
@@ -109,6 +110,29 @@ namespace Repositories.Service
             {
                 Message = "PostMetas retrieved successfully",
                 Data = postMetaResponseModels
+            };
+        }
+
+        public async Task<ResponseObject<PostMetaResponseModel>> GetPostMetaWithImageById(int Id)
+        {
+            var postmeta = await _postMetaRepository.GetPostMetaWithImageById(Id);
+
+            if (postmeta == null)
+            {
+                return new ResponseObject<PostMetaResponseModel>
+                {
+                    Message = "Postmeta not found",
+                    Data = null
+                };
+            }
+
+            var postmetaResponseModel = _mapper.Map<PostMetaResponseModel>(postmeta);
+
+
+            return new ResponseObject<PostMetaResponseModel>
+            {
+                Message = "Postmeta retrieved successfully",
+                Data = postmetaResponseModel
             };
         }
 

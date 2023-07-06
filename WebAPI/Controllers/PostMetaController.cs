@@ -79,6 +79,18 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Get post meta with image by ID")]
+        public async Task<ActionResult<ResponseObject<PostMetaResponseModel>>> GetPostMetaWithImageById(int id)
+        {
+            var response = await _postMetaService.GetPostMetaWithImageById(id);
+            if (response.Data == null)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
 
 
         [HttpGet]        

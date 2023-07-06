@@ -30,11 +30,15 @@ namespace BusinessObjectsLayer.Models
 
         [Required]
         public DateTime UpdatedAt { get; set; }
+
         
         [Required]
         public DateTime PublishedAt { get; set; }
         [Required]
         public string Content { get; set; }
+
+       
+        
 
         [ForeignKey("AuthorId")]
         public virtual User Author { get; set; }

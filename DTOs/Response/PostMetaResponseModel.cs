@@ -12,5 +12,7 @@ namespace DTOs.Response
         public int PostId { get; set; }
         public string Keys { get; set; }
         public string Contents { get; set; }
+
+        public List<ImageResponseModel> Images { get; set; }
     }
 }
