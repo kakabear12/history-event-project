@@ -3,6 +3,7 @@ using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Repositories.Repository;
 using System;
 using System.Collections.Generic;
@@ -173,8 +174,8 @@ namespace Repositories.Service
 
         public async Task<ResponseObject<IEnumerable<PostResponseModel>>> SearchPostByCategoryName(string categoryName)
         {
-            var post = await _postRepository.GetPostsByCategoryName(categoryName);
-            if (post == null)
+            var posts = await _postRepository.GetPostsByCategoryName(categoryName);
+            if (posts == null)
             {
                 return new ResponseObject<IEnumerable<PostResponseModel>>
                 {
@@ -183,11 +184,23 @@ namespace Repositories.Service
                 };
             }
 
-            var postResponse = _mapper.Map<IEnumerable<PostResponseModel>>(post);
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                postResponseModels.Add(postResponseModel);
+            }
+
             return new ResponseObject<IEnumerable<PostResponseModel>>
             {
                 Message = $"Posts in category '{categoryName}' retrieved successfully",
-                Data = postResponse
+                Data = postResponseModels
             };
         }
 
@@ -204,12 +217,23 @@ namespace Repositories.Service
                 };
             }
 
-            var postResponse = _mapper.Map<IEnumerable<PostResponseModel>>(posts);
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                postResponseModels.Add(postResponseModel);
+            }
 
             return new ResponseObject<IEnumerable<PostResponseModel>>
             {
                 Message = "Posts retrieved successfully",
-                Data = postResponse
+                Data = postResponseModels
             };
         }
 
