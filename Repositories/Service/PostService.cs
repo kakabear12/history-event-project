@@ -3,12 +3,11 @@ using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Repositories.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+
 using System.Threading.Tasks;
 
 namespace Repositories.Service
@@ -23,6 +22,11 @@ namespace Repositories.Service
         Task<ResponseObject<bool>> DeletePost(User user, DeletePostRequestModel request);
 
         Task<ResponseObject<PostResponseModel>> GetPostsByAuthorId(int authorId);
+
+        Task<ResponseObject<IEnumerable<PostResponseModel>>> SearchPostByCategoryName(string categoryName);
+
+        Task<ResponseObject<IEnumerable<PostResponseModel>>> SearchPostByMetaTitle(string keyword);
+
     }
 
     public class PostService : IPostService
@@ -30,11 +34,12 @@ namespace Repositories.Service
         private readonly PostRepository _postRepository;
        
         private readonly IMapper _mapper;
+        private readonly UsersRepository _userRepository;
 
-        public PostService(PostRepository postRepository,  IMapper mapper)
+        public PostService(PostRepository postRepository, UsersRepository userRepository,  IMapper mapper)
         {
             _postRepository = postRepository;
-            
+            _userRepository = userRepository;
             _mapper = mapper;
         }
         
@@ -45,9 +50,11 @@ namespace Repositories.Service
 
             await _postRepository.AddAsync(postEntity);
 
-
+            var author = await _userRepository.GetUserById(user.UserId);
 
             var postResponseModel = _mapper.Map<PostResponseModel>(postEntity);
+
+            postResponseModel.AuthorName= author.Name;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post created successfully",
@@ -68,6 +75,7 @@ namespace Repositories.Service
                 };
             }
 
+             
             _mapper.Map(request, post); // Update the properties of the post entity
 
             await _postRepository.UpdateAsync(post);
@@ -103,7 +111,7 @@ namespace Repositories.Service
 
         public async Task<ResponseObject<PostResponseModel>> GetPostById(int id)
         {
-            var post = await _postRepository.GetById(id);
+            var post = await _postRepository.GetPostById(id);
 
             if (post == null)
             {
@@ -115,18 +123,35 @@ namespace Repositories.Service
             }
 
             var postResponseModel = _mapper.Map<PostResponseModel>(post);
-
+            // Truy xuất thông tin người dùng từ repository
+            var author = await _userRepository.GetUserById(post.AuthorId);
+            postResponseModel.AuthorName = author?.Name;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post retrieved successfully",
                 Data = postResponseModel
             };
+           
+
         }
+       
+
 
         public async Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPosts()
         {
             var posts = await _postRepository.GetAllAsync();
-            var postResponseModels = _mapper.Map<IEnumerable<PostResponseModel>>(posts);
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                postResponseModels.Add(postResponseModel);
+            }
 
             return new ResponseObject<IEnumerable<PostResponseModel>>
             {
@@ -146,6 +171,72 @@ namespace Repositories.Service
                 Data = postResponseModels
             };
         }
+
+        public async Task<ResponseObject<IEnumerable<PostResponseModel>>> SearchPostByCategoryName(string categoryName)
+        {
+            var posts = await _postRepository.GetPostsByCategoryName(categoryName);
+            if (posts == null)
+            {
+                return new ResponseObject<IEnumerable<PostResponseModel>>
+                {
+                    Message = "Post not found",
+                    Data = null
+                };
+            }
+
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                postResponseModels.Add(postResponseModel);
+            }
+
+            return new ResponseObject<IEnumerable<PostResponseModel>>
+            {
+                Message = $"Posts in category '{categoryName}' retrieved successfully",
+                Data = postResponseModels
+            };
+        }
+
+        public async Task<ResponseObject<IEnumerable<PostResponseModel>>> SearchPostByMetaTitle(string keyword)
+        {
+            var posts = await _postRepository.SearchPostsByMetaTitle(keyword);
+
+            if (posts == null)
+            {
+                return new ResponseObject<IEnumerable<PostResponseModel>>
+                {
+                    Message = "Posts not found",
+                    Data = null
+                };
+            }
+
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                postResponseModels.Add(postResponseModel);
+            }
+
+            return new ResponseObject<IEnumerable<PostResponseModel>>
+            {
+                Message = "Posts retrieved successfully",
+                Data = postResponseModels
+            };
+        }
+
     }
 
 }

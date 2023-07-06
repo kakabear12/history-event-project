@@ -26,6 +26,7 @@ namespace BusinessObjectsLayer.Models
 
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         public virtual ICollection<Quiz> Quizzes { get; set; }
-        public virtual ICollection<Post> Posts { get; set; }       
+        public virtual ICollection<Post> Posts { get; set; }
+        
     }
 }

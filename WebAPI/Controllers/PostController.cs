@@ -117,6 +117,36 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpGet("search")]
+        [SwaggerOperation(Summary = "Search posts by category name")]
+        public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> SearchPostByCategoryName(string categoryName)
+        {
+            var response = await _postService.SearchPostByCategoryName(categoryName);
+
+            if (response.Data == null)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet("search/metaTitle")]
+        [SwaggerOperation(Summary = "Search posts by meta title")]
+        public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> SearchPostByMetaTitle(string keyword)
+        {
+            var response = await _postService.SearchPostByMetaTitle(keyword);
+
+            if (response.Data == null)
+            {
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
+
+
+
 
         private string GenerateSlug(string title)
         {

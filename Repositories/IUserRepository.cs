@@ -23,5 +23,6 @@ namespace Repositories
         Task<dynamic> GetTopTenUsersByMonth();
         Task<List<User>> GetTopTenUsers();
         Task<List<User>> SearchUsers(string keyword);
+       
     }
 }

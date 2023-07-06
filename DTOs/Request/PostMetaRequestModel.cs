@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BusinessObjectsLayer.Models;
+using DTOs.Response;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -18,5 +20,7 @@ namespace DTOs.Request
 
         [Required(ErrorMessage = "Contents is a required field")]
         public string Contents { get; set; }
+
+        
     }
 }

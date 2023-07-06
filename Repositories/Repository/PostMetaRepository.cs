@@ -28,5 +28,10 @@ namespace Repositories.Repository
         {
             return await _dbSet.Where(p => p.PostId == postId).ToListAsync();
         }
+
+        public async Task<PostMeta> GetPostMetaWithImageById(int id)
+        {
+            return await _dbSet.Include(c => c.Images).SingleOrDefaultAsync(p => p.Id == id);
+        }
     }
 }

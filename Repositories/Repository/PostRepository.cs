@@ -1,7 +1,9 @@
 ﻿using BusinessObjectsLayer.Models;
+using DTOs.Response;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -29,6 +31,34 @@ namespace Repositories.Repository
         {
             return await _dbSet.Where(expression).ToListAsync();
         }
+
+
+        
+
+        public async Task<Post> GetPostById(int id)
+        {
+            return await _dbSet.Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
+                       .SingleOrDefaultAsync(p => p.PostId == id);
+        }
+
+       
+
+        public async Task<IEnumerable<Post>> GetPostsByCategoryName(string categoryName)
+        {
+            return await _dbSet
+                               .Where(p => p.Categories.Any(c => c.CategoryName == categoryName))
+                               .Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
+                               .Include(p => p.Categories)
+                               .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Post>> SearchPostsByMetaTitle(string keyword)
+        {
+            return await _dbSet.Where(p => p.MetaTitle.Contains(keyword))
+                                .Include(p => p.PostMetas).ThenInclude(pm => pm.Images).ToListAsync();    
+        }
+
+
 
     }
 }

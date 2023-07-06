@@ -329,6 +329,7 @@ namespace Repositories.Service
                 imageEntity.Url = blobClient.Uri.ToString();
             }
 
+            postMetaEntity.Images ??= new List<Image>();
             postMetaEntity.Images.Add(imageEntity);
             await _postMetaRepository.UpdateAsync(postMetaEntity);
 
@@ -381,7 +382,7 @@ namespace Repositories.Service
                 // Update the Url field in the imageEntity with the URL of the uploaded image
                 imageEntity.Url = blobClient.Uri.ToString();
             }
-
+            tagEntity.Images ??= new List<Image>();
             tagEntity.Images.Add(imageEntity);
             await _tagRepository.UpdateAsync(tagEntity);
 

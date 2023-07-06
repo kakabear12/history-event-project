@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
             this.mapper = mapper;
         }
         [HttpGet]
-        [Authorize]
+       
         [SwaggerOperation(Summary = "For get list of category")]
         public async Task<IActionResult> GetCategories()
         {

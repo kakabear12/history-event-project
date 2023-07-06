@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObjectsLayer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace DTOs.Response
     public class PostResponseModel
     {
         public int PostId { get; set; }
-        public int AuthorId { get; set; }
+        public string AuthorName { get; set; }
         public int? ParentId { get; set; }
         public string MetaTitle { get; set; }
         public string Slug { get; set; }
@@ -19,6 +20,12 @@ namespace DTOs.Response
         public DateTime UpdatedAt { get; set; }
         public DateTime PublishedAt { get; set; }
         public string Content { get; set; }
+
+
+        public List<PostMetaResponseModel> PostMetas { get; set; }
+
+        
+
         // Other properties as needed
     }
 
