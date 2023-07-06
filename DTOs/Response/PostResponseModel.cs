@@ -10,7 +10,7 @@ namespace DTOs.Response
     public class PostResponseModel
     {
         public int PostId { get; set; }
-        public int AuthorId { get; set; }
+        public string AuthorName { get; set; }
         public int? ParentId { get; set; }
         public string MetaTitle { get; set; }
         public string Slug { get; set; }

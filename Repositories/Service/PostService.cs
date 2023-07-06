@@ -6,9 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Repositories.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+
 using System.Threading.Tasks;
 
 namespace Repositories.Service
@@ -35,11 +33,12 @@ namespace Repositories.Service
         private readonly PostRepository _postRepository;
        
         private readonly IMapper _mapper;
+        private readonly UsersRepository _userRepository;
 
-        public PostService(PostRepository postRepository,  IMapper mapper)
+        public PostService(PostRepository postRepository, UsersRepository userRepository,  IMapper mapper)
         {
             _postRepository = postRepository;
-            
+            _userRepository = userRepository;
             _mapper = mapper;
         }
         
@@ -50,9 +49,11 @@ namespace Repositories.Service
 
             await _postRepository.AddAsync(postEntity);
 
-
+            var author = await _userRepository.GetUserById(user.UserId);
 
             var postResponseModel = _mapper.Map<PostResponseModel>(postEntity);
+
+            postResponseModel.AuthorName= author.Name;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post created successfully",
@@ -73,6 +74,7 @@ namespace Repositories.Service
                 };
             }
 
+             
             _mapper.Map(request, post); // Update the properties of the post entity
 
             await _postRepository.UpdateAsync(post);
@@ -120,6 +122,9 @@ namespace Repositories.Service
             }
 
             var postResponseModel = _mapper.Map<PostResponseModel>(post);
+            // Truy xuất thông tin người dùng từ repository
+            var author = await _userRepository.GetUserById(post.AuthorId);
+            postResponseModel.AuthorName = author?.Name;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post retrieved successfully",
@@ -134,7 +139,18 @@ namespace Repositories.Service
         public async Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPosts()
         {
             var posts = await _postRepository.GetAllAsync();
-            var postResponseModels = _mapper.Map<IEnumerable<PostResponseModel>>(posts);
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                postResponseModels.Add(postResponseModel);
+            }
 
             return new ResponseObject<IEnumerable<PostResponseModel>>
             {
