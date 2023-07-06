@@ -1,5 +1,6 @@
 ﻿using BusinessObjectsLayer.Models;
 using DTOs.Exceptions;
+using DTOs.Response;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
@@ -212,7 +213,7 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
-        public async Task<List<dynamic>> GetTopTenUsersByMonth()
+        public async Task<List<GetRankByResponse>> GetTopTenUsersByMonth()
         {
             try
             {
@@ -233,7 +234,19 @@ namespace DataAccessLayer
                     .OrderByDescending(u => u.TotalScore)
                     .Take(10)
                     .ToListAsync();
-                return topUsers.Cast<object>().ToList();
+                List<GetRankByResponse> list = new List<GetRankByResponse>();
+                foreach (var user in topUsers)
+                {
+                    GetRankByResponse rank = new GetRankByResponse
+                    {
+                        Name = user.User.Name,
+                        Email = user.User.Email,
+                        Score = user.TotalScore
+                    };
+                    list.Add(rank);
+                }
+
+                return list;
             }
             catch (Exception ex)
             {

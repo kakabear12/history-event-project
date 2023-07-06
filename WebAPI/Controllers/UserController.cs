@@ -135,37 +135,14 @@ namespace WebAPI.Controllers
         [SwaggerOperation(Summary = "Get top ten user by total score")]
         public async Task<IActionResult> GetTopTenUsersByMonth()
         {
-            List<GetRankByResponse> res = new List<GetRankByResponse>();
-            List<dynamic> topUsers = await _userRepository.GetTopTenUsersByMonth();
-            foreach (dynamic user in topUsers)
-            {
-                if (user.TotalScore == null)
-                {
-                    GetRankByResponse rank = new GetRankByResponse
-                    {
-                        Name = user.User.Name,
-                        Email = user.User.Email,
-                        Score = 0
-                    };
-                    res.Add(rank);
-                }
-                else
-                {
-                    GetRankByResponse rank = new GetRankByResponse
-                    {
-                        Name = user.User.Name,
-                        Email = user.User.Email,
-                        Score = user.TotalScore
-                    };
-                    res.Add(rank);
-                }
-            }
+            List<GetRankByResponse> res = await _userRepository.GetTopTenUsersByMonth();
+            
             if(res.Count == 0)
             {
                 return BadRequest(new ResponseObject
                 {
                     Message = "List null",
-                    Data = ""
+                    Data = null
                 });
             }
             return Ok(new ResponseObject
