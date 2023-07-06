@@ -103,11 +103,26 @@ namespace WebAPI.Controllers
             List<GetRankByResponse> res = new List<GetRankByResponse>();
             foreach (var user in users)
             {
-                GetRankByResponse rank = new GetRankByResponse { 
-                    Email = user.Email,
-                    Name = user.Name,
-                    Score = (int)user.TotalScore
-                };
+                if(user.TotalScore == null)
+                {
+                    GetRankByResponse rank = new GetRankByResponse
+                    {
+                        Email = user.Email,
+                        Name = user.Name,
+                        Score = 0
+                    };
+                    res.Add(rank);
+                }
+                else
+                {
+                    GetRankByResponse rank = new GetRankByResponse
+                    {
+                        Email = user.Email,
+                        Name = user.Name,
+                        Score = (int)user.TotalScore
+                    };
+                    res.Add(rank);
+                }
             }
             return Ok(new ResponseObject
             {
@@ -124,13 +139,26 @@ namespace WebAPI.Controllers
             List<dynamic> topUsers = await _userRepository.GetTopTenUsersByMonth();
             foreach (dynamic user in topUsers)
             {
-                GetRankByResponse rank = new GetRankByResponse
+                if (user.TotalScore == null)
                 {
-                    Name = user.User.Name,
-                    Email = user.User.Email,
-                    Score = user.TotalScore
-                };
-                res.Add(rank);
+                    GetRankByResponse rank = new GetRankByResponse
+                    {
+                        Name = user.User.Name,
+                        Email = user.User.Email,
+                        Score = 0
+                    };
+                    res.Add(rank);
+                }
+                else
+                {
+                    GetRankByResponse rank = new GetRankByResponse
+                    {
+                        Name = user.User.Name,
+                        Email = user.User.Email,
+                        Score = user.TotalScore
+                    };
+                    res.Add(rank);
+                }
             }
             if(res.Count == 0)
             {

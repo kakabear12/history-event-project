@@ -229,6 +229,7 @@ namespace DataAccessLayer
                             .Where(q => q.StartTime >= startOfMonth && q.EndTime <= endOfMonth)
                             .Sum(q => q.Score)
                     })
+                    .Where(c=> c.User.Role == Role.Member)
                     .OrderByDescending(u => u.TotalScore)
                     .Take(10)
                     .ToListAsync();
@@ -243,7 +244,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var users = await context.Users.OrderByDescending(u => u.TotalScore)
+                var users = await context.Users.Where(c=> c.Role == Role.Member).OrderByDescending(u => u.TotalScore)
                     .Take(10)
                     .ToListAsync();
                 return users;

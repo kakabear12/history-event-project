@@ -174,6 +174,13 @@ namespace DataAccessLayer
                 {
                     quiz.EndTime = DateTime.Now;
                 }
+                var user = await context.Users.SingleOrDefaultAsync(c => c.UserId == quiz.User.UserId);
+                if (user == null)
+                {
+                    throw new CustomException("User not found");
+                }
+                user.TotalQuestion +=1;
+                user.TotalScore = quiz.Score;
                 await context.SaveChangesAsync();
             }catch(Exception ex)
             {
