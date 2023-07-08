@@ -24,6 +24,16 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
+        public async Task<List<Question>> GetQuestionsByEventId(int eventId)
+        {
+            try
+            {
+                return await context.Questions.Include(c=>c.Event).Include(q=> q.CreatedBy).Where(c=> c.Event.EventId == eventId).ToListAsync();
+            }catch(Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
         public async Task<List<Question>> GetQuesttionsFinished()
         {
             try {

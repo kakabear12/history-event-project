@@ -5,6 +5,7 @@ using DTOs.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Repositories;
 using Repositories.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
@@ -158,6 +159,42 @@ namespace WebAPI.Controllers
             {
                 Message = "Delete question successfully",
                 Data = null
+            });
+        }
+        [HttpGet("getQuestionsByEventId/{id}")]
+        [Authorize(Roles = "Editor,Member")]
+        [SwaggerOperation(Summary = "For get questions by eventId.")]
+        public async Task<IActionResult> GetQuestionsByEventId(int id)
+        {
+            if(id == null)
+            {
+                return BadRequest("Id is a required field");
+            }
+            var ques = await questionRepository.GetQuestionsByEventId(id);
+            if(ques.Count == 0)
+            {
+                return NotFound(new ResponseObject
+                {
+                    Data = null,
+                    Message = "List null"
+                });
+            }
+            var res = mapper.Map<List<QuestionResponse>>(ques);
+            foreach (var question in res)
+            {
+                foreach (var q in ques)
+                {
+                    if (question.QuestionId == q.QuestionId)
+                    {
+                        question.EventId = q.Event.EventId;
+                        question.CreatedBy = q.CreatedBy.Email;
+                    }
+                }
+            }
+            return Ok(new ResponseObject
+            {
+                Message = "Get list question by event id successfully",
+                Data = res
             });
         }
     }

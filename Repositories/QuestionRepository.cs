@@ -41,6 +41,11 @@ namespace Repositories
             return await questionDAO.GetQuestionById(id);
         }
 
+        public async Task<List<Question>> GetQuestionsByEventId(int eventId)
+        {
+            return await questionDAO.GetQuestionsByEventId(eventId);
+        }
+
         public async Task<Question> UpdateQuestion(Question q)
         {
             return await questionDAO.UpdateQuestion(q);
