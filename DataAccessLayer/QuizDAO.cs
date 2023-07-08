@@ -179,8 +179,16 @@ namespace DataAccessLayer
                 {
                     throw new CustomException("User not found");
                 }
-                user.TotalQuestion +=1;
-                user.TotalScore = quiz.Score;
+                if (user.TotalQuestion == null)
+                {
+                    user.TotalQuestion = 0;
+                }
+                if(user.TotalScore == null)
+                {
+                    user.TotalScore = 0;
+                }
+                user.TotalQuestion += 1;
+                user.TotalScore += quiz.Score;
                 await context.SaveChangesAsync();
             }catch(Exception ex)
             {
