@@ -197,5 +197,20 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
+        [HttpGet("getQuestionsById/{id}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For get questions by question id.")]
+        public async Task<IActionResult> GetQuestionById(int id)
+        {
+            var quest = await questionRepository.GetQuestionById(id);
+            var res = mapper.Map<QuestionResponse>(quest);
+            res.CreatedBy = quest.CreatedBy.Email;
+            res.EventId = quest.Event.EventId;
+            return Ok(new ResponseObject
+            {
+                Message = "Get question by id successfully",
+                Data = res
+            });
+        }
     }
 }

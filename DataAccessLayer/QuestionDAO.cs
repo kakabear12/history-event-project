@@ -114,7 +114,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var quest = await context.Questions.SingleOrDefaultAsync(c => c.QuestionId == id);
+                var quest = await context.Questions.Include(c=> c.CreatedBy).Include(c=> c.Event).SingleOrDefaultAsync(c => c.QuestionId == id);
                 if(quest == null)
                 {
                     throw new CustomException("Question not found");
