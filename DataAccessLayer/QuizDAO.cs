@@ -137,7 +137,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var quiz = await context.Quizzes.Include(q => q.QuestionQuizzes)
+                var quiz = await context.Quizzes.Include(c=> c.User).Include(q => q.QuestionQuizzes)
                     .ThenInclude(q => q.Question)
                     .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(q => q.QuizId == quizId);
