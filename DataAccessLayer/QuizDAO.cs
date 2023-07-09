@@ -144,10 +144,10 @@ namespace DataAccessLayer
 
                 DateTime currentTime = DateTime.Now;
                 TimeSpan timeElapsed = currentTime - quiz.StartTime.Value;
-                if (timeElapsed.TotalSeconds >= quiz.Time)
+                /*if (timeElapsed.TotalSeconds >= quiz.Time)
                 {
                     throw new CustomException("Exceeded the allotted time");
-                }
+                }*/
                 if (quiz == null)
                 {
                     throw new CustomException("Quiz not found");
@@ -165,18 +165,31 @@ namespace DataAccessLayer
                 {
                     throw new CustomException("Answer not found");
                 }
-
-                if(quest.Answers.FirstOrDefault(a=> a.IsCorrect == true).AnswerId == anserId)
+                var user = await context.Users.SingleOrDefaultAsync(c => c.UserId == quiz.User.UserId);
+                if (user == null)
+                {
+                    throw new CustomException("User not found");
+                }
+                if (user.TotalQuestion == null)
+                {
+                    user.TotalQuestion = 0;
+                }
+                if (user.TotalScore == null)
+                {
+                    user.TotalScore = 0;
+                }
+                if (quest.Answers.FirstOrDefault(a=> a.IsCorrect == true).AnswerId == anserId)
                 {
                     quiz.Score += 1;
                     quiz.EndTime = DateTime.Now;
+                    user.TotalScore += 1;
                 }
                 else
                 {
                     quiz.EndTime = DateTime.Now;
                 }
-
-                await context.SaveChangesAsync();
+                user.TotalQuestion += 1;
+            await context.SaveChangesAsync();
             }catch(Exception ex)
             {
                 throw new CustomException(ex.Message);

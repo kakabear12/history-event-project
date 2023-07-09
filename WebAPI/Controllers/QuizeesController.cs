@@ -98,17 +98,6 @@ namespace WebAPI.Controllers
             
             var quizInfo = await quizRepository.GetQuizById(request.QuizId);
 
-            var user = await userRepository.GetCurrentUserById(UserID);
-            if(user.TotalQuestion == null)
-            {
-                user.TotalQuestion = 0;
-            }
-            if(user.TotalScore == null)
-            {
-                user.TotalScore = 0;
-            }
-            user.TotalQuestion += quizInfo.NumberQuestion;
-            user.TotalScore += quizInfo.Score;
 
             var res = mapper.Map<QuizResultResponse>(quizInfo);
             return Ok(new ResponseObject
