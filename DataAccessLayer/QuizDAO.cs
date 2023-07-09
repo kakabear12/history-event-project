@@ -144,10 +144,10 @@ namespace DataAccessLayer
 
                 DateTime currentTime = DateTime.Now;
                 TimeSpan timeElapsed = currentTime - quiz.StartTime.Value;
-                /*if (timeElapsed.TotalSeconds >= quiz.Time)
+                if (timeElapsed.TotalSeconds >= quiz.Time)
                 {
                     throw new CustomException("Exceeded the allotted time");
-                }*/
+                }
                 if (quiz == null)
                 {
                     throw new CustomException("Quiz not found");
