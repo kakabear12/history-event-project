@@ -165,6 +165,7 @@ namespace DataAccessLayer
                 {
                     throw new CustomException("Answer not found");
                 }
+
                 if(quest.Answers.FirstOrDefault(a=> a.IsCorrect == true).AnswerId == anserId)
                 {
                     quiz.Score += 1;
@@ -174,21 +175,7 @@ namespace DataAccessLayer
                 {
                     quiz.EndTime = DateTime.Now;
                 }
-                var user = await context.Users.SingleOrDefaultAsync(c => c.UserId == quiz.User.UserId);
-                if (user == null)
-                {
-                    throw new CustomException("User not found");
-                }
-                if (user.TotalQuestion == null)
-                {
-                    user.TotalQuestion = 0;
-                }
-                if(user.TotalScore == null)
-                {
-                    user.TotalScore = 0;
-                }
-                user.TotalQuestion += 1;
-                user.TotalScore += quiz.Score;
+
                 await context.SaveChangesAsync();
             }catch(Exception ex)
             {
