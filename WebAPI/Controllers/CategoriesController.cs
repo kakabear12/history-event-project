@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
                 Data = cates
             });
         }
-        [HttpPost("createCategory")]
+        [HttpPost("CreateCategory")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For create category")]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
                 Data = null
             });
         }
-        [HttpPut("updateCategory")]
+        [HttpPut("UpdateCategory")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For update category")]
         public async Task<IActionResult> updateCategory([FromBody] UpdateCategoryRequest request)
@@ -73,7 +73,7 @@ namespace WebAPI.Controllers
                 Data = request
             });
         }
-        [HttpDelete("deleteCategory")]
+        [HttpDelete("DeleteCategory")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For update category")]
         public async Task<IActionResult> DeleteCategory (int id)

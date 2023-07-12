@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             return claim.Value;
 
         }
-        [HttpGet("getAllQuestions")]
+        [HttpGet("GetAllQuestions")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get list of all questions.")]
         public async Task<IActionResult> GetAllQuestions()
@@ -76,7 +76,7 @@ namespace WebAPI.Controllers
                 Data = res
             }) ;
         }
-        [HttpGet("getAllCompletedQuestions")]
+        [HttpGet("GetAllCompletedQuestions")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get list of all questions.")]
         public async Task<IActionResult> GetFinishedQuestions()
@@ -103,7 +103,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpPost("createQuestion")]
+        [HttpPost("CreateQuestion")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For create question.")]
         public async Task<IActionResult> CreateQuestion([FromBody]CreateQuestionRequest request)
@@ -126,7 +126,7 @@ namespace WebAPI.Controllers
                 Data = resQ
             });
         }
-        [HttpPut("updateQuestion")]
+        [HttpPut("UpdateQuestion")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For update question.")]
         public async Task<IActionResult> UpdateQuestion([FromBody]UpdateQuestionRequest request) 
@@ -145,7 +145,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpDelete("deleteQuestion")]
+        [HttpDelete("DeleteQuestion")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For delete question.")]
         public async Task<IActionResult> DeleteQuestion (int id)
@@ -161,7 +161,7 @@ namespace WebAPI.Controllers
                 Data = null
             });
         }
-        [HttpGet("getQuestionsByEventId/{id}")]
+        [HttpGet("GetQuestionsByEventId/{id}")]
         [Authorize(Roles = "Editor,Member")]
         [SwaggerOperation(Summary = "For get questions by eventId.")]
         public async Task<IActionResult> GetQuestionsByEventId(int id)
@@ -197,7 +197,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpGet("getQuestionsById/{id}")]
+        [HttpGet("GetQuestionsById/{id}")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get questions by question id.")]
         public async Task<IActionResult> GetQuestionById(int id)

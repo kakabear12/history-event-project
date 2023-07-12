@@ -132,7 +132,7 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
-        [HttpGet("searchEvents/{keyword}")]
+        [HttpGet("SearchEvents/{keyword}")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "For search events by name")]
         public async Task<IActionResult> SearchEvents(string keyword)

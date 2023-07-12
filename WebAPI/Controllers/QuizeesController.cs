@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
             return claim.Value;
 
         }
-        [HttpPost("createQuiz")]
+        [HttpPost("CreateQuiz")]
         [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For create quiz for user")]
         public async Task<IActionResult> CreateQuiz(int eventId, [FromBody] CreateQuizRequest request)
@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpGet("getQuiz")]
+        [HttpGet("GetQuiz")]
         [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For get quiz for member to do")]
         public async Task<IActionResult> GetQuiz(int quizId)
@@ -78,7 +78,7 @@ namespace WebAPI.Controllers
             var resquiz = mapper.Map<GetQuizResponse>(quiz);
             return Ok(resquiz);
         }
-        [HttpPost("getResultQuiz")]
+        [HttpPost("GetResultQuiz")]
         [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For get result of quiz")]
         public async Task<IActionResult> GetQuizResult([FromBody]ResultQuizRequest request)
@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpGet("getQuizzessByUserId")]
+        [HttpGet("GetQuizzessByUserId")]
         [Authorize(Roles = "Member")]
         [SwaggerOperation(Summary = "For get list quiz by user id")]
         public async Task<IActionResult> GetQuizzessByUserId()
