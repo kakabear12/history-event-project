@@ -24,6 +24,16 @@ namespace DataAccessLayer
                 throw new CustomException(ex.Message);
             }
         }
+        public async Task<List<Question>> GetQuestionsByEventId(int eventId)
+        {
+            try
+            {
+                return await context.Questions.Include(c=>c.Event).Include(q=> q.CreatedBy).Where(c=> c.Event.EventId == eventId).ToListAsync();
+            }catch(Exception ex)
+            {
+                throw new CustomException(ex.Message);
+            }
+        }
         public async Task<List<Question>> GetQuesttionsFinished()
         {
             try {
@@ -104,7 +114,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var quest = await context.Questions.SingleOrDefaultAsync(c => c.QuestionId == id);
+                var quest = await context.Questions.Include(c=> c.CreatedBy).Include(c=> c.Event).SingleOrDefaultAsync(c => c.QuestionId == id);
                 if(quest == null)
                 {
                     throw new CustomException("Question not found");

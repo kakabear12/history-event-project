@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
             this.answerRepository = answerRepository;
             this.mapper = mapper;
         }
-        [HttpGet("getAllAnswersByQuestionId")]
+        [HttpGet("GetAllAnswersByQuestionId")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get list of answers by question id")]
         public async Task<IActionResult> GetAllAnswersByQuestionId(int id)
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpPost("createAnswer")]
+        [HttpPost("CreateAnswer")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For create answer")]
         public async Task<IActionResult> CreateAnswer([FromBody] CreateAnswerRequest request)
@@ -71,7 +71,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpPut("updateAnswer")]
+        [HttpPut("UpdateAnswer")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For update answer")]
         public async Task<IActionResult> UpdateAnswer([FromBody]UpdateAnswerRequest request)
@@ -92,7 +92,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpDelete("deleteAnswer")]
+        [HttpDelete("DeleteAnswer")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For delete answer")]
         public async Task<IActionResult> DeleteAnswer(int id)

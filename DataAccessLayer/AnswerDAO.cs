@@ -66,7 +66,7 @@ namespace DataAccessLayer
                 }
                 if (quest.Answers.Count > 0 && answer.IsCorrect == true)
                 {
-                    if (quest.Answers.Any(c => c.IsCorrect == true))
+                    if (quest.Answers.Any(c => c.IsCorrect == true && c.AnswerId != answer.AnswerId))
                     {
                         throw new CustomException("The question has the correct answer");
                     }

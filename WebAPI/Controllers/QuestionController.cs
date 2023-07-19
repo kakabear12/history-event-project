@@ -5,6 +5,7 @@ using DTOs.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Repositories;
 using Repositories.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
@@ -48,7 +49,7 @@ namespace WebAPI.Controllers
             return claim.Value;
 
         }
-        [HttpGet("getAllQuestions")]
+        [HttpGet("GetAllQuestions")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get list of all questions.")]
         public async Task<IActionResult> GetAllQuestions()
@@ -75,7 +76,7 @@ namespace WebAPI.Controllers
                 Data = res
             }) ;
         }
-        [HttpGet("getAllCompletedQuestions")]
+        [HttpGet("GetAllCompletedQuestions")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For get list of all questions.")]
         public async Task<IActionResult> GetFinishedQuestions()
@@ -102,7 +103,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpPost("createQuestion")]
+        [HttpPost("CreateQuestion")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For create question.")]
         public async Task<IActionResult> CreateQuestion([FromBody]CreateQuestionRequest request)
@@ -125,7 +126,7 @@ namespace WebAPI.Controllers
                 Data = resQ
             });
         }
-        [HttpPut("updateQuestion")]
+        [HttpPut("UpdateQuestion")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For update question.")]
         public async Task<IActionResult> UpdateQuestion([FromBody]UpdateQuestionRequest request) 
@@ -144,7 +145,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpDelete("deleteQuestion")]
+        [HttpDelete("DeleteQuestion")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For delete question.")]
         public async Task<IActionResult> DeleteQuestion (int id)
@@ -158,6 +159,57 @@ namespace WebAPI.Controllers
             {
                 Message = "Delete question successfully",
                 Data = null
+            });
+        }
+        [HttpGet("GetQuestionsByEventId/{id}")]
+        [Authorize(Roles = "Editor,Member")]
+        [SwaggerOperation(Summary = "For get questions by eventId.")]
+        public async Task<IActionResult> GetQuestionsByEventId(int id)
+        {
+            if(id == null)
+            {
+                return BadRequest("Id is a required field");
+            }
+            var ques = await questionRepository.GetQuestionsByEventId(id);
+            if(ques.Count == 0)
+            {
+                return NotFound(new ResponseObject
+                {
+                    Data = null,
+                    Message = "List null"
+                });
+            }
+            var res = mapper.Map<List<QuestionResponse>>(ques);
+            foreach (var question in res)
+            {
+                foreach (var q in ques)
+                {
+                    if (question.QuestionId == q.QuestionId)
+                    {
+                        question.EventId = q.Event.EventId;
+                        question.CreatedBy = q.CreatedBy.Email;
+                    }
+                }
+            }
+            return Ok(new ResponseObject
+            {
+                Message = "Get list question by event id successfully",
+                Data = res
+            });
+        }
+        [HttpGet("GetQuestionsById/{id}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For get questions by question id.")]
+        public async Task<IActionResult> GetQuestionById(int id)
+        {
+            var quest = await questionRepository.GetQuestionById(id);
+            var res = mapper.Map<QuestionResponse>(quest);
+            res.CreatedBy = quest.CreatedBy.Email;
+            res.EventId = quest.Event.EventId;
+            return Ok(new ResponseObject
+            {
+                Message = "Get question by id successfully",
+                Data = res
             });
         }
     }

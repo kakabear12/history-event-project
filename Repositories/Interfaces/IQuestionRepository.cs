@@ -15,5 +15,6 @@ namespace Repositories.Interfaces
         Task DeleteQuestion(int id);
         Task<Question> UpdateQuestion(Question q);
         Task<Question> GetQuestionById(int id);
+        Task<List<Question>> GetQuestionsByEventId(int eventId);
     }
 }

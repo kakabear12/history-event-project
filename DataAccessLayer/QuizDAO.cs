@@ -137,7 +137,7 @@ namespace DataAccessLayer
         {
             try
             {
-                var quiz = await context.Quizzes.Include(q => q.QuestionQuizzes)
+                var quiz = await context.Quizzes.Include(c=> c.User).Include(q => q.QuestionQuizzes)
                     .ThenInclude(q => q.Question)
                     .ThenInclude(q => q.Answers)
                 .FirstOrDefaultAsync(q => q.QuizId == quizId);
@@ -165,23 +165,31 @@ namespace DataAccessLayer
                 {
                     throw new CustomException("Answer not found");
                 }
-                if(quest.Answers.FirstOrDefault(a=> a.IsCorrect == true).AnswerId == anserId)
-                {
-                    quiz.Score += 1;
-                    quiz.EndTime = DateTime.Now;
-                }
-                else
-                {
-                    quiz.EndTime = DateTime.Now;
-                }
                 var user = await context.Users.SingleOrDefaultAsync(c => c.UserId == quiz.User.UserId);
                 if (user == null)
                 {
                     throw new CustomException("User not found");
                 }
-                user.TotalQuestion +=1;
-                user.TotalScore = quiz.Score;
-                await context.SaveChangesAsync();
+                if (user.TotalQuestion == null)
+                {
+                    user.TotalQuestion = 0;
+                }
+                if (user.TotalScore == null)
+                {
+                    user.TotalScore = 0;
+                }
+                if (quest.Answers.FirstOrDefault(a=> a.IsCorrect == true).AnswerId == anserId)
+                {
+                    quiz.Score += 1;
+                    quiz.EndTime = DateTime.Now;
+                    user.TotalScore += 1;
+                }
+                else
+                {
+                    quiz.EndTime = DateTime.Now;
+                }
+                user.TotalQuestion += 1;
+            await context.SaveChangesAsync();
             }catch(Exception ex)
             {
                 throw new CustomException(ex.Message);

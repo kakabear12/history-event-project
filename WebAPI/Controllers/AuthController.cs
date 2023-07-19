@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
 
         [AllowAnonymous]
         [SwaggerOperation(Summary = "For register")]
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<ActionResult<string>> Register([FromBody] RegisterModel model)
         {
             if (!ModelState.IsValid)
@@ -66,7 +66,7 @@ namespace WebAPI.Controllers
         }
         [AllowAnonymous]
         [SwaggerOperation(Summary = "For login")]
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<ActionResult<TokenResponse>> Login([FromBody] LoginModel loginModel)
         {
             if (!ModelState.IsValid)
@@ -86,7 +86,7 @@ namespace WebAPI.Controllers
         [HttpPost]
         [Authorize]
         [SwaggerOperation(Summary = "For get new access token")]
-        [Route("refreshToken")]
+        [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody]RefreshTokenRequest refreshTokenRequest)
         {
             if (!ModelState.IsValid)
@@ -108,7 +108,7 @@ namespace WebAPI.Controllers
         [Authorize]
         [HttpPost]
         [SwaggerOperation(Summary = "For logout")]
-        [Route("logout")]
+        [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
             var logout = await userRepository.Logout(UserID);
@@ -140,7 +140,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         [SwaggerOperation(Summary = "For get information of current user.")]
         [ServiceFilter(typeof(AccessTokenBlacklistFilter))]
-        [Route("info")]
+        [Route("Info")]
         public async Task<IActionResult> Info()
         {
             var userResponse = await userRepository.GetCurrentUserById(UserID);

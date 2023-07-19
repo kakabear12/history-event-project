@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
                 Data = usersRes
             });
         }
-        [HttpDelete("deleteUser")]
+        [HttpDelete("DeleteUser")]
         [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "For delete a user")]
         public async Task<IActionResult> DeleteUser(int id)
@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
                 Data = null
             });
         }
-        [HttpPut("updateInfo")]
+        [HttpPut("UpdateInfo")]
         [Authorize]
         [SwaggerOperation(Summary = "For update info user")]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel userModel)
@@ -78,7 +78,7 @@ namespace WebAPI.Controllers
                 Data= userRes
             });
         }
-        [HttpPut("updateRole")]
+        [HttpPut("UpdateRole")]
         [Authorize(Roles = "Admin")]
         [SwaggerOperation(Summary = "For update user role")]
         public async Task<IActionResult> UpdateUserRole(UpdateRoleRequest request)
@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
                 Data = null
             });
         }
-        [HttpGet("getTopTenUser")]
+        [HttpGet("GetTopTenUser")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Get top ten user by total score")]
         public async Task<IActionResult> GetTopTenUsers()
@@ -130,7 +130,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpGet("getTopTenUsersByMonth")]
+        [HttpGet("GetTopTenUsersByMonth")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "Get top ten user by total score")]
         public async Task<IActionResult> GetTopTenUsersByMonth()
@@ -151,7 +151,7 @@ namespace WebAPI.Controllers
                 Data = res
             });
         }
-        [HttpGet("searchUser/{keyword}")]
+        [HttpGet("SearchUser/{keyword}")]
         [AllowAnonymous]
         [SwaggerOperation(Summary = "For search user by name")]
         public async Task<IActionResult> SearchUsers(string keyword)
