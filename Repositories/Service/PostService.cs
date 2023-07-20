@@ -38,10 +38,15 @@ namespace Repositories.Service
         private readonly UsersRepository _userRepository;
         private readonly CatesgoryRepository _categoryRepository;
         private readonly EventsRepository _eventsRepository;
+        private readonly ImageRepository _imageRepository;
+        private readonly PostMetaRepository _postMetaRepository;
 
-        public PostService(PostRepository postRepository, UsersRepository userRepository, CatesgoryRepository categoryRepository,EventsRepository eventRepository, IMapper mapper)
+
+        public PostService(PostMetaRepository postMetaRepository, ImageRepository imageRepository,PostRepository postRepository, UsersRepository userRepository, CatesgoryRepository categoryRepository,EventsRepository eventRepository, IMapper mapper)
         {
             _postRepository = postRepository;
+            _imageRepository= imageRepository;
+            _postMetaRepository= postMetaRepository;
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
             _eventsRepository = eventRepository;
@@ -174,6 +179,7 @@ namespace Repositories.Service
             var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
             postResponseModel.CategoryNames = categoryNames;
 
+
             // Lấy danh sách tên event và gán vào postResponseModel
             var eventNames = post.Events?.Select(events => events.EventName).ToList();
             postResponseModel.EventNames = eventNames;
@@ -210,8 +216,19 @@ namespace Repositories.Service
                 postResponseModel.AuthorName = author?.Name;
 
 
-                // Lấy danh sách tên category và gán vào postResponseModel
-                var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+                // Use the CategoryRepository to get the categories by name
+                var categoryNames = new List<string>();
+                if (post.Categories != null && post.Categories.Any())
+                {
+                    foreach (var category in post.Categories)
+                    {
+                        var categoryEntity = await _categoryRepository.GetCategoryByName(category.CategoryName);
+                        if (categoryEntity != null)
+                        {
+                            categoryNames.Add(categoryEntity.CategoryName);
+                        }
+                    }
+                }
                 postResponseModel.CategoryNames = categoryNames;
 
                 // Lấy danh sách tên event và gán vào postResponseModel

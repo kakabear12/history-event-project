@@ -33,13 +33,18 @@ namespace Repositories.Repository
         }
 
 
-        
 
         public async Task<Post> GetPostById(int id)
         {
-            return await _dbSet.Include(p => p.PostMetas).ThenInclude(pm => pm.Images).ThenInclude(e =>e.Events)
-                       .SingleOrDefaultAsync(p => p.PostId == id);
+            return await _dbSet
+                .Include(p => p.PostMetas).ThenInclude(pm => pm.Images).ThenInclude(e => e.Events)
+                .Include(p => p.Categories)
+                .Include(p => p.Events)
+                .Include(p => p.Images)
+                .SingleOrDefaultAsync(p => p.PostId == id);
         }
+
+       
 
 
 
@@ -49,21 +54,32 @@ namespace Repositories.Repository
                 .Where(p => p.Categories.Any(c => c.CategoryName.ToLower() == categoryName.ToLower()))
                 .Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
                 .Include(p => p.Categories)
+                .Include(pm => pm.Images)
+                .Include(e => e.Events).ThenInclude(p => p.Images)
                 .ToListAsync();
         }
 
 
         public async Task<IEnumerable<Post>> SearchPostsByMetaTitle(string keyword)
         {
-            return await _dbSet.Where(p => p.MetaTitle.Contains(keyword))
-                                .Include(p => p.PostMetas).ThenInclude(pm => pm.Images).ToListAsync();    
+            return await _dbSet
+                .Where(p => p.MetaTitle.Contains(keyword))
+                .Include(p => p.PostMetas).ThenInclude(p => p.Images)
+                .Include(p => p.Categories)
+                .Include(pm => pm.Images)
+                .Include(e => e.Events).ThenInclude(p => p.Images)
+                .ToListAsync();    
         }
 
 
         public async Task<IEnumerable<Post>> GetAllAsyncs()
         {
-            return await _dbSet.Include(p => p.PostMetas)
-                .Include(p => p.Categories).Include(pm => pm.Images).Include(e => e.Events).ToListAsync();
+            return await _dbSet
+                .Include(p => p.PostMetas).ThenInclude(p => p.Images)
+                .Include(p => p.Categories)
+                .Include(pm => pm.Images)
+                .Include(e => e.Events).ThenInclude(p => p.Images)
+                .ToListAsync();
         }
 
 
