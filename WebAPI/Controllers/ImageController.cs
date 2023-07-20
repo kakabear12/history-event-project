@@ -93,5 +93,15 @@ namespace WebAPI.Controllers
         }
 
 
+        [HttpPost("posts/{postId}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "Add an image to a post")]
+        public async Task<ActionResult<ResponseObject<PostResponseModel>>> AddImageToPost(int postId, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
+        {
+            var response = await _imageService.AddImageToPost(postId, imageModel, imageFile);
+            return Ok(response);
+        }
+
+
     }
 }
