@@ -60,6 +60,12 @@ namespace Repositories.Repository
         }
 
 
+        public async Task<IEnumerable<Post>> GetAllAsyncs()
+        {
+            return await _dbSet.Include(p => p.PostMetas)
+                .Include(p => p.Categories).Include(pm => pm.Images).Include(e => e.Events).ToListAsync();
+        }
+
 
     }
 }

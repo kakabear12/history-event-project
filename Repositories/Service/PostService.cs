@@ -181,7 +181,7 @@ namespace Repositories.Service
 
         public async Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPosts()
         {
-            var posts = await _postRepository.GetAllAsync();
+            var posts = await _postRepository.GetAllAsyncs();
             var postResponseModels = new List<PostResponseModel>();
 
             foreach (var post in posts)
