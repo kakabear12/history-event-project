@@ -42,7 +42,7 @@ namespace Repositories.JWT
                 var token = new JwtSecurityToken(_configuration["JWT:Issuer"],
                     _configuration["JWT:Audience"],
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddHours(1),
                     signingCredentials: cred);
                 var jwt = new JwtSecurityTokenHandler().WriteToken(token);
                 return jwt;
