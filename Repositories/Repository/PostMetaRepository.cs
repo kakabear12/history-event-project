@@ -20,13 +20,13 @@ namespace Repositories.Repository
         }
         public async Task<PostMeta> GetPostMetaById(int postId, int metaId)
         {
-            return await _dbSet.SingleOrDefaultAsync(p => p.PostId == postId && p.Id == metaId);
+            return await _dbSet.Include(i => i.Images).SingleOrDefaultAsync(p => p.PostId == postId && p.Id == metaId);
         }
 
 
         public async Task<IEnumerable<PostMeta>> GetPostMetaByPostId(int postId)
         {
-            return await _dbSet.Where(p => p.PostId == postId).ToListAsync();
+            return await _dbSet.Include(i => i.Images).Where(p => p.PostId == postId).ToListAsync();
         }
 
         public async Task<PostMeta> GetPostMetaWithImageById(int id)

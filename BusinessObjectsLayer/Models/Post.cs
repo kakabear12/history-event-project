@@ -56,5 +56,7 @@ namespace BusinessObjectsLayer.Models
         public virtual Post ParentPost { get; set; }
 
         public virtual ICollection<Post> ChildPosts { get; set; }
+
+        public virtual ICollection<Image> Images { get; set; }
     }
 }

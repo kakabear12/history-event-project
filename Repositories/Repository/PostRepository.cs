@@ -24,12 +24,12 @@ namespace Repositories.Repository
 
         public async Task<IEnumerable<Post>> GetPostsByAuthorId(int authorId)
         {
-            return await _dbSet.Where(p => p.AuthorId == authorId).ToListAsync();
+            return await _dbSet.Include(i => i.Images).Where(p => p.AuthorId == authorId).ToListAsync();
         }
 
         public async Task<IEnumerable<Post>> FindByCondition(Expression<Func<Post, bool>> expression)
         {
-            return await _dbSet.Where(expression).ToListAsync();
+            return await _dbSet.Include(i => i.Images).Where(expression).ToListAsync();
         }
 
 
@@ -37,7 +37,7 @@ namespace Repositories.Repository
 
         public async Task<Post> GetPostById(int id)
         {
-            return await _dbSet.Include(p => p.PostMetas).ThenInclude(pm => pm.Images)
+            return await _dbSet.Include(p => p.PostMetas).ThenInclude(pm => pm.Images).ThenInclude(e =>e.Events)
                        .SingleOrDefaultAsync(p => p.PostId == id);
         }
 

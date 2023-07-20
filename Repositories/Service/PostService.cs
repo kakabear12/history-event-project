@@ -37,42 +37,55 @@ namespace Repositories.Service
         private readonly IMapper _mapper;
         private readonly UsersRepository _userRepository;
         private readonly CatesgoryRepository _categoryRepository;
+        private readonly EventsRepository _eventsRepository;
 
-        public PostService(PostRepository postRepository, UsersRepository userRepository, CatesgoryRepository categoryRepository, IMapper mapper)
+        public PostService(PostRepository postRepository, UsersRepository userRepository, CatesgoryRepository categoryRepository,EventsRepository eventRepository, IMapper mapper)
         {
             _postRepository = postRepository;
             _userRepository = userRepository;
             _categoryRepository = categoryRepository;
+            _eventsRepository = eventRepository;
             _mapper = mapper;
         }
-        
-        public async Task<ResponseObject<PostResponseModel>> CreatePost(User user,  CreatePostRequestModel request)
+
+        public async Task<ResponseObject<PostResponseModel>> CreatePost(User user, CreatePostRequestModel request)
         {
             var postEntity = _mapper.Map<Post>(request);
             postEntity.Author = user;
 
-            // Tạo danh sách các đối tượng Category dựa trên CategoryNames
+            // Lấy danh sách các Category từ database
             var categories = new List<Category>();
             if (request.CategoryNames != null && request.CategoryNames.Any())
             {
                 foreach (var categoryName in request.CategoryNames)
                 {
                     var existingCategory = await _categoryRepository.GetCategoryByName(categoryName);
-                    if (existingCategory == null)
-                    {
-                        // Nếu CategoryName chưa tồn tại, tạo một đối tượng Category mới và lưu vào cơ sở dữ liệu
-                        var newCategory = new Category { CategoryName = categoryName };
-                        await _categoryRepository.AddAsync(newCategory);
-                        categories.Add(newCategory);
-                    }
-                    else
+                    if (existingCategory != null)
                     {
                         categories.Add(existingCategory);
                     }
+                    // Không tạo mới Category nếu không tồn tại, như yêu cầu của bạn
                 }
             }
             // Gán danh sách Category vào Post
             postEntity.Categories = categories;
+
+            // Lấy danh sách các Event từ database
+            var events = new List<Event>();
+            if (request.EventNames != null && request.EventNames.Any())
+            {
+                foreach (var eventName in request.EventNames)
+                {
+                    var existingEvent = await _eventsRepository.GetEventByName(eventName);
+                    if (existingEvent != null)
+                    {
+                        events.Add(existingEvent);
+                    }
+                    // Không tạo mới Event nếu không tồn tại, như yêu cầu của bạn
+                }
+            }
+            // Gán danh sách Event vào Post
+            postEntity.Events = events;
 
             await _postRepository.AddAsync(postEntity);
 
@@ -80,14 +93,16 @@ namespace Repositories.Service
 
             var postResponseModel = _mapper.Map<PostResponseModel>(postEntity);
 
-            postResponseModel.AuthorName= author.Name;
+            postResponseModel.AuthorName = author.Name;
             postResponseModel.CategoryNames = request.CategoryNames;
+            postResponseModel.EventNames = request.EventNames;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post created successfully",
                 Data = postResponseModel
             };
         }
+
 
         public async Task<ResponseObject<bool>> UpdatePost(User user, int id, UpdatePostRequestModel request)
         {
@@ -233,36 +248,64 @@ namespace Repositories.Service
 
         public async Task<ResponseObject<IEnumerable<PostResponseModel>>> SearchPostByMetaTitle(string keyword)
         {
-            var posts = await _postRepository.SearchPostsByMetaTitle(keyword);
-
-            if (posts == null)
+            if (string.IsNullOrEmpty(keyword)) // Kiểm tra nếu keyword là null hoặc rỗng
             {
+                var posts = await _postRepository.GetAllAsync(); // Lấy tất cả các bài post
+
+                var postResponseModels = new List<PostResponseModel>();
+
+                foreach (var post in posts)
+                {
+                    var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                    // Truy xuất thông tin người dùng từ repository
+                    var author = await _userRepository.GetUserById(post.AuthorId);
+                    postResponseModel.AuthorName = author?.Name;
+
+                    postResponseModels.Add(postResponseModel);
+                }
+
                 return new ResponseObject<IEnumerable<PostResponseModel>>
                 {
-                    Message = "Posts not found",
-                    Data = null
+                    Message = "Posts retrieved successfully",
+                    Data = postResponseModels
                 };
             }
-
-            var postResponseModels = new List<PostResponseModel>();
-
-            foreach (var post in posts)
+            else
             {
-                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+                // Xử lý như cũ khi có keyword
+                var posts = await _postRepository.SearchPostsByMetaTitle(keyword);
 
-                // Truy xuất thông tin người dùng từ repository
-                var author = await _userRepository.GetUserById(post.AuthorId);
-                postResponseModel.AuthorName = author?.Name;
+                if (posts == null)
+                {
+                    return new ResponseObject<IEnumerable<PostResponseModel>>
+                    {
+                        Message = "Posts not found",
+                        Data = null
+                    };
+                }
 
-                postResponseModels.Add(postResponseModel);
+                var postResponseModels = new List<PostResponseModel>();
+
+                foreach (var post in posts)
+                {
+                    var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                    // Truy xuất thông tin người dùng từ repository
+                    var author = await _userRepository.GetUserById(post.AuthorId);
+                    postResponseModel.AuthorName = author?.Name;
+
+                    postResponseModels.Add(postResponseModel);
+                }
+
+                return new ResponseObject<IEnumerable<PostResponseModel>>
+                {
+                    Message = "Posts retrieved successfully",
+                    Data = postResponseModels
+                };
             }
-
-            return new ResponseObject<IEnumerable<PostResponseModel>>
-            {
-                Message = "Posts retrieved successfully",
-                Data = postResponseModels
-            };
         }
+
 
     }
 

@@ -17,5 +17,7 @@ namespace DTOs.Response
         public DateTime? EndDate { get; set; }
 
         public string Description { get; set; }
+
+        public List<ImageResponseModel> Images { get; set; }
     }
 }

@@ -34,6 +34,8 @@ namespace BusinessObjectsLayer.Models
         public virtual ICollection<PostMeta> PostMetas { get; set; }
         public virtual ICollection<Tag> Tags { get; set; }
 
+        public virtual ICollection<Post> Posts { get; set; }
+
 
 
 

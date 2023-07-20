@@ -4,14 +4,16 @@ using BusinessObjectsLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BusinessObjectsLayer.Migrations
 {
     [DbContext(typeof(HistoryEventDBContext))]
-    partial class HistoryEventDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230720070111_HistoryDbnew")]
+    partial class HistoryDbnew
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

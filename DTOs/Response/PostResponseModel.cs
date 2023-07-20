@@ -22,9 +22,10 @@ namespace DTOs.Response
         public string Content { get; set; }
 
         public List<string> CategoryNames { get; set; }
+        public List<string> EventNames { get; set; }
         public List<PostMetaResponseModel> PostMetas { get; set; }
 
-        
+        public List<ImageResponseModel> Images { get; set; }
 
         // Other properties as needed
     }

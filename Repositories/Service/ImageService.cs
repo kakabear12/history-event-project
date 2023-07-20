@@ -30,6 +30,8 @@ namespace Repositories.Service
         Task<ResponseObject<PostMetaResponseModel>> AddImageToPostMeta(int postId, int metaId, ImageRequestModel imageModel, IFormFile imageFile);
         Task<ResponseObject<EventResponseModel>> AddImageToEvent(int eventId, ImageRequestModel imageModel, IFormFile imageFile);
 
+        Task<ResponseObject<PostResponseModel>> AddImageToPost(int postId, ImageRequestModel imageModel, IFormFile imageFile);
+
 
     }
     public class ImageService : IImageService
@@ -38,6 +40,7 @@ namespace Repositories.Service
         private readonly TagRepository _tagRepository;
         private readonly PostMetaRepository _postMetaRepository;
         private readonly EventsRepository _eventRepository;
+        private readonly PostRepository _postRepository;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
@@ -46,6 +49,7 @@ namespace Repositories.Service
         TagRepository tagRepository,
         PostMetaRepository postMetaRepository,
         EventsRepository eventRepository,
+         PostRepository postRepository,
         IConfiguration configuration,
         IMapper mapper)
         {
@@ -53,6 +57,7 @@ namespace Repositories.Service
             _tagRepository = tagRepository;
             _postMetaRepository = postMetaRepository;
             _eventRepository = eventRepository;
+            _postRepository= postRepository;    
             _configuration = configuration;
             _mapper = mapper;
         }
@@ -394,5 +399,58 @@ namespace Repositories.Service
             };
         }
 
+        public async Task<ResponseObject<PostResponseModel>> AddImageToPost(int postId, ImageRequestModel imageModel, IFormFile imageFile)
+        {
+            var postEntity = await _postRepository.GetPostById(postId);
+            if (postEntity == null)
+            {
+                return new ResponseObject<PostResponseModel>
+                {
+                    Message = "Post not found",
+                    Data = null
+                };
+            }
+
+            var imageEntity = _mapper.Map<Image>(imageModel);
+
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                // Retrieve the Azure Storage connection string and container name from the configuration
+                var connectionString = _configuration["AzureStorage:ConnectionString"];
+                var containerName = _configuration["AzureStorage:ContainerName"];
+
+                // Create a BlobServiceClient using the connection string
+                var blobServiceClient = new BlobServiceClient(connectionString);
+
+                // Get a reference to the container
+                var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+                // Generate a unique file name for the uploaded image
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+
+                // Get a reference to the blob
+                var blobClient = containerClient.GetBlobClient(fileName);
+
+                // Upload the image file to the blob
+                using (var stream = imageFile.OpenReadStream())
+                {
+                    await blobClient.UploadAsync(stream, true);
+                }
+
+                // Update the Url field in the imageEntity with the URL of the uploaded image
+                imageEntity.Url = blobClient.Uri.ToString();
+            }
+
+            postEntity.Images ??= new List<Image>();
+            postEntity.Images.Add(imageEntity);
+            await _postRepository.UpdateAsync(postEntity);
+
+            var postResponseModel = _mapper.Map<PostResponseModel>(postEntity);
+            return new ResponseObject<PostResponseModel>
+            {
+                Message = "Image added to post successfully",
+                Data = postResponseModel
+            };
+        }
     }
 }

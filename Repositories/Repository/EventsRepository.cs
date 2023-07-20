@@ -22,10 +22,14 @@ namespace Repositories.Repository
         // Implement any additional methods specific to the EventsRepository here
         public async Task<IEnumerable<Event>> GetEventsByPostId(int postId)
         {
-            return await _dbSet.Where(e => e.Posts.Any(p => p.PostId == postId)).ToListAsync();
+            return await _dbSet.Include(i => i.Images).Where(e => e.Posts.Any(p => p.PostId == postId)).ToListAsync();
         }
-         
-       
+
+        public async Task<Event> GetEventByName(string eventName)
+        {
+            return await _dbSet.Include(i => i.Images)
+                .FirstOrDefaultAsync(e => e.EventName == eventName);
+        }
 
 
     }
