@@ -168,6 +168,23 @@ namespace Repositories.Service
             // Truy xuất thông tin người dùng từ repository
             var author = await _userRepository.GetUserById(post.AuthorId);
             postResponseModel.AuthorName = author?.Name;
+
+
+            // Lấy danh sách tên category và gán vào postResponseModel
+            var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+            postResponseModel.CategoryNames = categoryNames;
+
+            // Lấy danh sách tên event và gán vào postResponseModel
+            var eventNames = post.Events?.Select(events => events.EventName).ToList();
+            postResponseModel.EventNames = eventNames;
+
+            // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+            var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+            postResponseModel.PostMetas = postMetas;
+
+            // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+            var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+            postResponseModel.Images = images;
             return new ResponseObject<PostResponseModel>
             {
                 Message = "Post retrieved successfully",
@@ -189,9 +206,25 @@ namespace Repositories.Service
                 var postResponseModel = _mapper.Map<PostResponseModel>(post);
 
                 // Truy xuất thông tin người dùng từ repository
-                var author = await _userRepository.GetUserById(post.AuthorId);
+                var author = await _userRepository.GetUserById(post.AuthorId);               
                 postResponseModel.AuthorName = author?.Name;
 
+
+                // Lấy danh sách tên category và gán vào postResponseModel
+                var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+                postResponseModel.CategoryNames = categoryNames;
+
+                // Lấy danh sách tên event và gán vào postResponseModel
+                var eventNames = post.Events?.Select(events => events.EventName).ToList();
+                 postResponseModel.EventNames = eventNames;
+
+                 // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+                  var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+                  postResponseModel.PostMetas = postMetas;
+
+                 // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+                   var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+                    postResponseModel.Images = images;
                 postResponseModels.Add(postResponseModel);
             }
 
@@ -236,6 +269,22 @@ namespace Repositories.Service
                 var author = await _userRepository.GetUserById(post.AuthorId);
                 postResponseModel.AuthorName = author?.Name;
 
+
+                // Lấy danh sách tên category và gán vào postResponseModel
+                var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+                postResponseModel.CategoryNames = categoryNames;
+
+                // Lấy danh sách tên event và gán vào postResponseModel
+                var eventNames = post.Events?.Select(events => events.EventName).ToList();
+                postResponseModel.EventNames = eventNames;
+
+                // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+                var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+                postResponseModel.PostMetas = postMetas;
+
+                // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+                var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+                postResponseModel.Images = images;
                 postResponseModels.Add(postResponseModel);
             }
 
@@ -262,6 +311,22 @@ namespace Repositories.Service
                     var author = await _userRepository.GetUserById(post.AuthorId);
                     postResponseModel.AuthorName = author?.Name;
 
+
+                    // Lấy danh sách tên category và gán vào postResponseModel
+                    var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+                    postResponseModel.CategoryNames = categoryNames;
+
+                    // Lấy danh sách tên event và gán vào postResponseModel
+                    var eventNames = post.Events?.Select(events => events.EventName).ToList();
+                    postResponseModel.EventNames = eventNames;
+
+                    // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+                    var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+                    postResponseModel.PostMetas = postMetas;
+
+                    // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+                    var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+                    postResponseModel.Images = images;
                     postResponseModels.Add(postResponseModel);
                 }
 
@@ -295,6 +360,21 @@ namespace Repositories.Service
                     var author = await _userRepository.GetUserById(post.AuthorId);
                     postResponseModel.AuthorName = author?.Name;
 
+                    // Lấy danh sách tên category và gán vào postResponseModel
+                    var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+                    postResponseModel.CategoryNames = categoryNames;
+
+                    // Lấy danh sách tên event và gán vào postResponseModel
+                    var eventNames = post.Events?.Select(events => events.EventName).ToList();
+                    postResponseModel.EventNames = eventNames;
+
+                    // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+                    var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+                    postResponseModel.PostMetas = postMetas;
+
+                    // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+                    var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+                    postResponseModel.Images = images;
                     postResponseModels.Add(postResponseModel);
                 }
 
