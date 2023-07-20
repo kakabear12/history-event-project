@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Azure.Storage;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using BusinessObjectsLayer.Models;
 using DTOs.Request;
 using DTOs.Response;
@@ -18,16 +21,14 @@ namespace Repositories.Service
 {
     public interface IImageService
     {
-        Task<ResponseObject<ImageResponseModel>> CreateAsync(ImageRequestModel imageModel, IFormFile imageFile);
-
-        Task<ResponseObject<ImageResponseModel>> UpdateImage(int id, ImageRequestModel imageModel, IFormFile imageFile);
-        Task<ResponseObject<ImageResponseModel>> GetByIdAsync(int id);
+       
+        
         Task<ResponseObject<IEnumerable<ImageResponseModel>>> GetAllAsync();
        
       
-        Task<ResponseObject<bool>> DeleteAsync(int id);
+       
         Task<ResponseObject<TagResponseModel>> AddImageToTag(int tagId, ImageRequestModel imageModel, IFormFile imageFile);
-        Task<ResponseObject<PostMetaResponseModel>> AddImageToPostMeta(int postId, int metaId, ImageRequestModel imageModel, IFormFile imageFile);
+        Task<ResponseObject<PostMetaResponseModel>> AddImageToPostMeta(int metaId, ImageRequestModel imageModel, IFormFile imageFile);
         Task<ResponseObject<EventResponseModel>> AddImageToEvent(int eventId, ImageRequestModel imageModel, IFormFile imageFile);
 
         Task<ResponseObject<PostResponseModel>> AddImageToPost(int postId, ImageRequestModel imageModel, IFormFile imageFile);
@@ -61,72 +62,10 @@ namespace Repositories.Service
             _configuration = configuration;
             _mapper = mapper;
         }
-        public async Task<ResponseObject<ImageResponseModel>> CreateAsync(ImageRequestModel imageModel, IFormFile imageFile)
-        {
-
-            var imageEntity = _mapper.Map<Image>(imageModel);
-
-            // Validate the image entity or perform any necessary checks
-            // ...
-
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                // Retrieve the Azure Storage connection string and container name from the configuration
-                var connectionString = _configuration["AzureStorage:ConnectionString"];
-                var containerName = _configuration["AzureStorage:ContainerName"];
-
-                // Create a BlobServiceClient using the connection string
-                var blobServiceClient = new BlobServiceClient(connectionString);
-
-                // Get a reference to the container
-                var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-                // Generate a unique file name for the uploaded image
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-
-                // Get a reference to the blob
-                var blobClient = containerClient.GetBlobClient(fileName);
-
-                // Upload the image file to the blob
-                using (var stream = imageFile.OpenReadStream())
-                {
-                    await blobClient.UploadAsync(stream, true);
-                }
-
-                // Update the Url field in the imageEntity with the URL of the uploaded image
-                imageEntity.Url = blobClient.Uri.ToString();
-            }
-
-            await _imageRepository.AddAsync(imageEntity);
-
-            var createdImageModel = _mapper.Map<ImageResponseModel>(imageEntity);
-            return new ResponseObject<ImageResponseModel>
-            {
-                Message = "Image created successfully",
-                Data = createdImageModel
-            };
-        }
+        
 
 
-        public async Task<ResponseObject<ImageResponseModel>> GetByIdAsync(int id)
-        {
-            var image = await _imageRepository.GetById(id);
-            if (image == null)
-            {
-                return new ResponseObject<ImageResponseModel>
-                {
-                    Message = "Image not found",
-                    Data = null
-                };
-            }
-
-            var imageModel = _mapper.Map<ImageResponseModel>(image);
-            return new ResponseObject<ImageResponseModel>
-            {
-                Message = "Image retrieved successfully",
-                Data = imageModel
-            };
-        }
+        
 
         public async Task<ResponseObject<IEnumerable<ImageResponseModel>>> GetAllAsync()
         {
@@ -140,96 +79,9 @@ namespace Repositories.Service
             };
         }
 
-        public async Task<ResponseObject<bool>> DeleteAsync(int id)
-        {
-            var image = await _imageRepository.GetById(id);
-            if (image == null)
-            {
-                return new ResponseObject<bool>
-                {
-                    Message = "Image not found",
-                    Data = false
-                };
-            }
+        
 
-            await _imageRepository.DeleteAsync(image);
-
-            return new ResponseObject<bool>
-            {
-                Message = "Image deleted successfully",
-                Data = true
-            };
-        }
-
-        public async Task<ResponseObject<ImageResponseModel>> UpdateImage(int id, ImageRequestModel imageModel, IFormFile imageFile)
-        {
-            var existingImage = await _imageRepository.GetById(id);
-            if (existingImage == null)
-            {
-                return new ResponseObject<ImageResponseModel>
-                {
-                    Message = "Image not found",
-                    Data = null
-                };
-            }
-
-            // Update the existing image entity with the new data
-            var imageProperties = imageModel.GetType().GetProperties();
-            foreach (var property in imageProperties)
-            {
-                var newValue = property.GetValue(imageModel);
-                if (newValue != null)
-                {
-                    var existingImageProperty = existingImage.GetType().GetProperty(property.Name);
-                    if (existingImageProperty != null && existingImageProperty.CanWrite)
-                    {
-                        existingImageProperty.SetValue(existingImage, newValue);
-                    }
-                }
-            }
-
-            // ...
-
-            // Validate the updated image entity or perform any necessary checks
-            // ...
-
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                // Retrieve the Azure Storage connection string and container name from the configuration
-                var connectionString = _configuration["AzureStorage:ConnectionString"];
-                var containerName = _configuration["AzureStorage:ContainerName"];
-
-                // Create a BlobServiceClient using the connection string
-                var blobServiceClient = new BlobServiceClient(connectionString);
-
-                // Get a reference to the container
-                var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-                // Generate a unique file name for the uploaded image
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-
-                // Get a reference to the blob
-                var blobClient = containerClient.GetBlobClient(fileName);
-
-                // Upload the image file to the blob
-                using (var stream = imageFile.OpenReadStream())
-                {
-                    await blobClient.UploadAsync(stream, true);
-                }
-
-                // Update the Url field in the existing imageEntity with the URL of the uploaded image
-                existingImage.Url = blobClient.Uri.ToString();
-            }
-
-            await _imageRepository.UpdateAsync(existingImage);
-
-            var updatedImageModel = _mapper.Map<ImageResponseModel>(existingImage);
-            return new ResponseObject<ImageResponseModel>
-            {
-                Message = "Image updated successfully",
-                Data = updatedImageModel
-            };
-        }
+        
 
 
         public async Task<ResponseObject<EventResponseModel>> AddImageToEvent(int eventId, ImageRequestModel imageModel, IFormFile imageFile)
@@ -272,9 +124,47 @@ namespace Repositories.Service
                 {
                     await blobClient.UploadAsync(stream, true);
                 }
+                // Đặt loại MIME cho blob (hình ảnh JPEG hoặc JPG)
+                var contentType = imageFile.ContentType.ToLower();
+                if (contentType == "image/jpeg" || contentType == "image/jpg")
+                {
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = contentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
+                else
+                {
+                    // Nếu không phải là loại MIME hỗ trợ, bạn có thể đặt loại MIME mặc định tùy ý ở đây.
+                    // Ví dụ: nếu không xác định được loại MIME chính xác, bạn có thể đặt loại MIME thành "application/octet-stream".
+                    // Tùy chỉnh loại MIME này dựa trên yêu cầu của ứng dụng của bạn.
+                    var defaultContentType = "application/octet-stream";
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = defaultContentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
 
-                // Update the Url field in the imageEntity with the URL of the uploaded image
-                imageEntity.Url = blobClient.Uri.ToString();
+                // Update the Url field in the imageEntity with the Blob SAS URL
+                var sasBuilder = new BlobSasBuilder()
+                {
+                    BlobContainerName = containerName,
+                    BlobName = fileName,
+                    Resource = "b",
+                    StartsOn = DateTimeOffset.UtcNow,
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(24), // Set the expiration time for the SAS URL (24 hours in this example)
+                    Protocol = SasProtocol.Https
+                };
+                // Set the permissions for the SAS URL (in this example, read permissions)
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+                // Generate the SAS token for the blob
+                var sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration["AzureStorage:AccountName"], _configuration["AzureStorage:AccountKey"])).ToString();
+
+                // Combine the Blob URL with the SAS token to create the final SAS URL
+                imageEntity.Url = blobClient.Uri + "?" + sasToken;
             }
 
             // Check if existingEvent.Images is null and initialize a new list if it is null
@@ -292,9 +182,9 @@ namespace Repositories.Service
         }
 
 
-        public async Task<ResponseObject<PostMetaResponseModel>> AddImageToPostMeta(int postId, int metaId, ImageRequestModel imageModel, IFormFile imageFile)
+        public async Task<ResponseObject<PostMetaResponseModel>> AddImageToPostMeta( int metaId, ImageRequestModel imageModel, IFormFile imageFile)
         {
-            var postMetaEntity = await _postMetaRepository.GetPostMetaById(postId, metaId);
+            var postMetaEntity = await _postMetaRepository.GetById( metaId);
             if (postMetaEntity == null)
             {
                 return new ResponseObject<PostMetaResponseModel>
@@ -329,9 +219,47 @@ namespace Repositories.Service
                 {
                     await blobClient.UploadAsync(stream, true);
                 }
+                // Đặt loại MIME cho blob (hình ảnh JPEG hoặc JPG)
+                var contentType = imageFile.ContentType.ToLower();
+                if (contentType == "image/jpeg" || contentType == "image/jpg")
+                {
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = contentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
+                else
+                {
+                    // Nếu không phải là loại MIME hỗ trợ, bạn có thể đặt loại MIME mặc định tùy ý ở đây.
+                    // Ví dụ: nếu không xác định được loại MIME chính xác, bạn có thể đặt loại MIME thành "application/octet-stream".
+                    // Tùy chỉnh loại MIME này dựa trên yêu cầu của ứng dụng của bạn.
+                    var defaultContentType = "application/octet-stream";
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = defaultContentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
 
-                // Update the Url field in the imageEntity with the URL of the uploaded image
-                imageEntity.Url = blobClient.Uri.ToString();
+                // Update the Url field in the imageEntity with the Blob SAS URL
+                var sasBuilder = new BlobSasBuilder()
+                {
+                    BlobContainerName = containerName,
+                    BlobName = fileName,
+                    Resource = "b",
+                    StartsOn = DateTimeOffset.UtcNow,
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(24), // Set the expiration time for the SAS URL (24 hours in this example)
+                    Protocol = SasProtocol.Https
+                };
+                // Set the permissions for the SAS URL (in this example, read permissions)
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+                // Generate the SAS token for the blob
+                var sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration["AzureStorage:AccountName"], _configuration["AzureStorage:AccountKey"])).ToString();
+
+                // Combine the Blob URL with the SAS token to create the final SAS URL
+                imageEntity.Url = blobClient.Uri + "?" + sasToken;
             }
 
             postMetaEntity.Images ??= new List<Image>();
@@ -383,9 +311,47 @@ namespace Repositories.Service
                 {
                     await blobClient.UploadAsync(stream, true);
                 }
+                // Đặt loại MIME cho blob (hình ảnh JPEG hoặc JPG)
+                var contentType = imageFile.ContentType.ToLower();
+                if (contentType == "image/jpeg" || contentType == "image/jpg")
+                {
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = contentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
+                else
+                {
+                    // Nếu không phải là loại MIME hỗ trợ, bạn có thể đặt loại MIME mặc định tùy ý ở đây.
+                    // Ví dụ: nếu không xác định được loại MIME chính xác, bạn có thể đặt loại MIME thành "application/octet-stream".
+                    // Tùy chỉnh loại MIME này dựa trên yêu cầu của ứng dụng của bạn.
+                    var defaultContentType = "application/octet-stream";
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = defaultContentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
 
-                // Update the Url field in the imageEntity with the URL of the uploaded image
-                imageEntity.Url = blobClient.Uri.ToString();
+                // Update the Url field in the imageEntity with the Blob SAS URL
+                var sasBuilder = new BlobSasBuilder()
+                {
+                    BlobContainerName = containerName,
+                    BlobName = fileName,
+                    Resource = "b",
+                    StartsOn = DateTimeOffset.UtcNow,
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(24), // Set the expiration time for the SAS URL (24 hours in this example)
+                    Protocol = SasProtocol.Https
+                };
+                // Set the permissions for the SAS URL (in this example, read permissions)
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+                // Generate the SAS token for the blob
+                var sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration["AzureStorage:AccountName"], _configuration["AzureStorage:AccountKey"])).ToString();
+
+                // Combine the Blob URL with the SAS token to create the final SAS URL
+                imageEntity.Url = blobClient.Uri + "?" + sasToken;
             }
             tagEntity.Images ??= new List<Image>();
             tagEntity.Images.Add(imageEntity);
@@ -399,6 +365,7 @@ namespace Repositories.Service
             };
         }
 
+        
         public async Task<ResponseObject<PostResponseModel>> AddImageToPost(int postId, ImageRequestModel imageModel, IFormFile imageFile)
         {
             var postEntity = await _postRepository.GetPostById(postId);
@@ -436,9 +403,47 @@ namespace Repositories.Service
                 {
                     await blobClient.UploadAsync(stream, true);
                 }
+                // Đặt loại MIME cho blob (hình ảnh JPEG hoặc JPG)
+                var contentType = imageFile.ContentType.ToLower();
+                if (contentType == "image/jpeg" || contentType == "image/jpg")
+                {
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = contentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
+                else
+                {
+                    // Nếu không phải là loại MIME hỗ trợ, bạn có thể đặt loại MIME mặc định tùy ý ở đây.
+                    // Ví dụ: nếu không xác định được loại MIME chính xác, bạn có thể đặt loại MIME thành "application/octet-stream".
+                    // Tùy chỉnh loại MIME này dựa trên yêu cầu của ứng dụng của bạn.
+                    var defaultContentType = "application/octet-stream";
+                    var blobHttpHeaders = new BlobHttpHeaders
+                    {
+                        ContentType = defaultContentType
+                    };
+                    await blobClient.SetHttpHeadersAsync(blobHttpHeaders);
+                }
 
-                // Update the Url field in the imageEntity with the URL of the uploaded image
-                imageEntity.Url = blobClient.Uri.ToString();
+                // Update the Url field in the imageEntity with the Blob SAS URL
+                var sasBuilder = new BlobSasBuilder()
+                {
+                    BlobContainerName = containerName,
+                    BlobName = fileName,
+                    Resource = "b",
+                    StartsOn = DateTimeOffset.UtcNow,
+                    ExpiresOn = DateTimeOffset.UtcNow.AddHours(24), // Set the expiration time for the SAS URL (24 hours in this example)
+                    Protocol = SasProtocol.Https
+                };
+                // Set the permissions for the SAS URL (in this example, read permissions)
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+                // Generate the SAS token for the blob
+                var sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(_configuration["AzureStorage:AccountName"], _configuration["AzureStorage:AccountKey"])).ToString();
+
+                // Combine the Blob URL with the SAS token to create the final SAS URL
+                imageEntity.Url = blobClient.Uri + "?" + sasToken;
             }
 
             postEntity.Images ??= new List<Image>();
@@ -452,5 +457,6 @@ namespace Repositories.Service
                 Data = postResponseModel
             };
         }
+
     }
 }
