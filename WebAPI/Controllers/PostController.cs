@@ -95,9 +95,9 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+ 
 
-
-        [HttpDelete("{id}")]
+    [HttpDelete("{id}")]
          [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "For delete post by id")]
         public async Task<ActionResult<ResponseObject<bool>>> DeletePost(int id)

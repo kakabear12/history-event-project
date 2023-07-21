@@ -41,5 +41,9 @@ namespace DTOs.Request
         public string Content { get; set; }
 
         // Other properties as needed
+
+        public List<string> CategoryNames { get; set; }
+
+        public List<string> EventNames { get; set; }
     }
 }

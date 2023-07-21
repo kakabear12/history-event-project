@@ -109,6 +109,7 @@ namespace Repositories.Service
         }
 
 
+        
         public async Task<ResponseObject<bool>> UpdatePost(User user, int id, UpdatePostRequestModel request)
         {
             var post = await _postRepository.GetById(id);
@@ -122,7 +123,46 @@ namespace Repositories.Service
                 };
             }
 
-             
+            // Xóa các bản ghi liên kết trong bảng "CategoryPost" của bài viết
+            post.Categories?.Clear();
+
+            // Lấy danh sách các Category từ database và thêm vào bài viết
+            var categories = new List<Category>();
+            if (request.CategoryNames != null && request.CategoryNames.Any())
+            {
+                foreach (var categoryName in request.CategoryNames)
+                {
+                    var existingCategory = await _categoryRepository.GetCategoryByName(categoryName);
+                    if (existingCategory != null)
+                    {
+                        categories.Add(existingCategory);
+                    }
+                    // Không tạo mới Category nếu không tồn tại, như yêu cầu của bạn
+                }
+            }
+            // Gán danh sách Category mới vào Post
+            post.Categories = categories;
+
+            // Xóa các bản ghi liên kết trong bảng "EventPost" của bài viết
+            post.Events?.Clear();
+
+            // Lấy danh sách các Event từ database và thêm vào bài viết
+            var events = new List<Event>();
+            if (request.EventNames != null && request.EventNames.Any())
+            {
+                foreach (var eventName in request.EventNames)
+                {
+                    var existingEvent = await _eventsRepository.GetEventByName(eventName);
+                    if (existingEvent != null)
+                    {
+                        events.Add(existingEvent);
+                    }
+                    // Không tạo mới Event nếu không tồn tại, như yêu cầu của bạn
+                }
+            }
+            // Gán danh sách Event mới vào Post
+            post.Events = events;
+
             _mapper.Map(request, post); // Update the properties of the post entity
 
             await _postRepository.UpdateAsync(post);
@@ -133,6 +173,9 @@ namespace Repositories.Service
                 Data = true
             };
         }
+
+
+
 
         public async Task<ResponseObject<bool>> DeletePost(User user, DeletePostRequestModel request)
         {
@@ -241,7 +284,7 @@ namespace Repositories.Service
 
                  // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
                    var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
-                    postResponseModel.Images = images;
+                   postResponseModel.Images = images;
                 postResponseModels.Add(postResponseModel);
             }
 
@@ -272,7 +315,7 @@ namespace Repositories.Service
                 return new ResponseObject<IEnumerable<PostResponseModel>>
                 {
                     Message = "Post not found",
-                    Data = null
+                    Data = null 
                 };
             }
 

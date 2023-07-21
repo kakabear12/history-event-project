@@ -75,6 +75,24 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPut("posts/{postId}/images/{imageId}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "Update an image in a post")]
+        public async Task<ActionResult<ResponseObject<PostResponseModel>>> UpdateImageToPost(int postId, int imageId, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
+        {
+            var response = await _imageService.UpdateImageToPost(postId, imageId, imageModel, imageFile);
+            return Ok(response);
+        }
+
+
+        [HttpPut("postmeta/{metaId}/image/{imageId}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "Update an image in post meta")]
+        public async Task<ActionResult<ResponseObject<PostMetaResponseModel>>> UpdateImageToPostMeta(int metaId, int imageId, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
+        {
+            var response = await _imageService.UpdateImageToPostMeta(metaId, imageId, imageModel, imageFile);
+            return Ok(response);
+        }
 
     }
 }
