@@ -120,7 +120,7 @@ namespace WebAPI.Controllers
                     Data = null
                 });
             }
-            var res = mapper.Map<List<QuizResponse>>(quizzess);
+            var res = mapper.Map<List<QuizResultResponse>>(quizzess);
             return Ok(new ResponseObject
             {
                 Message = "Get all quiz by user id successfully",
