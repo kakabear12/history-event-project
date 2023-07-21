@@ -21,31 +21,11 @@ namespace WebAPI.Controllers
             _imageService = imageService;
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Editor")]
-        [SwaggerOperation(Summary = "Create an image")]
-        public async Task<ActionResult<ResponseObject<ImageResponseModel>>> CreateImage([FromForm] ImageRequestModel imageModel, IFormFile imageFile)
-        {
-            var response = await _imageService.CreateAsync(imageModel, imageFile);
-            return Ok(response);
-        }
+        
 
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Editor")]
-        [SwaggerOperation(Summary = "Update an image by ID")]
-        public async Task<ActionResult<ResponseObject<ImageResponseModel>>> UpdateImage(int id, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
-        {
-            var response = await _imageService.UpdateImage(id, imageModel, imageFile);
-            return Ok(response);
-        }
+        
 
-        [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Get an image by ID")]
-        public async Task<ActionResult<ResponseObject<ImageResponseModel>>> GetImageById(int id)
-        {
-            var response = await _imageService.GetByIdAsync(id);
-            return Ok(response);
-        }
+        
 
         [HttpGet]
         [SwaggerOperation(Summary = "Get all images")]
@@ -55,14 +35,7 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Editor")]
-        [SwaggerOperation(Summary = "Delete an image by ID")]
-        public async Task<ActionResult<ResponseObject<bool>>> DeleteImage(int id)
-        {
-            var response = await _imageService.DeleteAsync(id);
-            return Ok(response);
-        }
+        
 
 
         [HttpPost("tags/{tagId}")]
@@ -77,9 +50,9 @@ namespace WebAPI.Controllers
         [HttpPost("postmeta/{postId}/meta/{metaId}")]
         [Authorize(Roles = "Editor")]
         [SwaggerOperation(Summary = "Add an image to post meta")]
-        public async Task<ActionResult<ResponseObject<PostMetaResponseModel>>> AddImageToPostMeta(int postId, int metaId, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
+        public async Task<ActionResult<ResponseObject<PostMetaResponseModel>>> AddImageToPostMeta( int metaId, [FromForm] ImageRequestModel imageModel, IFormFile imageFile)
         {
-            var response = await _imageService.AddImageToPostMeta(postId, metaId, imageModel, imageFile);
+            var response = await _imageService.AddImageToPostMeta(metaId, imageModel, imageFile);
             return Ok(response);
         }
 
