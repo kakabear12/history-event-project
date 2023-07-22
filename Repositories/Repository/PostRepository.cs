@@ -81,6 +81,19 @@ namespace Repositories.Repository
                 .Include(e => e.Events).ThenInclude(p => p.Images)
                 .ToListAsync();
         }
+        
+
+        public async Task<Post> GetPostByIdForEditor(int id, int editorUserId)
+        {
+            return await _dbSet
+                .Include(p => p.PostMetas).ThenInclude(pm => pm.Images).ThenInclude(e => e.Events)
+                .Include(p => p.Categories)
+                .Include(p => p.Events)
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.PostId == id && p.AuthorId == editorUserId);
+        }
+
+
 
 
     }

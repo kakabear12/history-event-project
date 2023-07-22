@@ -57,6 +57,15 @@ namespace WebAPI.Controllers
 
             return Ok(response);
         }
+        [HttpGet("editor/{id}")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For get post by id for the editor")]
+        public async Task<ActionResult<ResponseObject<PostResponseModel>>> GetPostByIdForEditor(int id)
+        {
+            int editorUserId = UserID;
+            var response = await _postService.GetPostByIdForEditor(id, editorUserId);
+            return Ok(response);
+        }
 
         [HttpGet]      
         [SwaggerOperation(Summary = "For get list of posts")]
@@ -65,6 +74,18 @@ namespace WebAPI.Controllers
             var response = await _postService.GetAllPosts();
             return Ok(response);
         }
+
+        [HttpGet("editor")]
+        [Authorize(Roles = "Editor")]
+        [SwaggerOperation(Summary = "For get list of posts for the editor")]
+        public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> GetAllPostsForEditor()
+        {
+            int editorUserId = UserID;
+            var response = await _postService.GetAllPostsForEditor(editorUserId);
+            return Ok(response);
+        }
+
+
 
         [HttpPost]
         [Authorize(Roles = "Editor")]

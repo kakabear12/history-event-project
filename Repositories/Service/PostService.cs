@@ -17,7 +17,9 @@ namespace Repositories.Service
     public interface IPostService
     {
         Task<ResponseObject<PostResponseModel>> GetPostById(int id);
+        Task<ResponseObject<PostResponseModel>> GetPostByIdForEditor(int id, int editorUserId);
         Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPosts();
+        Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPostsForEditor(int editorUserId);
         Task<ResponseObject<PostResponseModel>> CreatePost(User user, CreatePostRequestModel request);
         Task<ResponseObject<bool>> UpdatePost(User user, int id, UpdatePostRequestModel request);
         Task<ResponseObject<bool>> DeletePost(User user, DeletePostRequestModel request);
@@ -242,7 +244,52 @@ namespace Repositories.Service
            
 
         }
-       
+
+        public async Task<ResponseObject<PostResponseModel>> GetPostByIdForEditor(int id, int editorUserId)
+        {
+            // Get the user's post by ID
+            var post = await _postRepository.GetPostByIdForEditor(id, editorUserId);
+
+            if (post == null)
+            {
+                return new ResponseObject<PostResponseModel>
+                {
+                    Message = "Post not found",
+                    Data = null
+                };
+            }
+
+            var postResponseModel = _mapper.Map<PostResponseModel>(post);
+            // Truy xuất thông tin người dùng từ repository
+            var author = await _userRepository.GetUserById(post.AuthorId);
+            postResponseModel.AuthorName = author?.Name;
+
+
+            // Lấy danh sách tên category và gán vào postResponseModel
+            var categoryNames = post.Categories?.Select(category => category.CategoryName).ToList();
+            postResponseModel.CategoryNames = categoryNames;
+
+
+            // Lấy danh sách tên event và gán vào postResponseModel
+            var eventNames = post.Events?.Select(events => events.EventName).ToList();
+            postResponseModel.EventNames = eventNames;
+
+            // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+            var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+            postResponseModel.PostMetas = postMetas;
+
+            // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+            var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+            postResponseModel.Images = images;
+            return new ResponseObject<PostResponseModel>
+            {
+                Message = "Post retrieved successfully",
+                Data = postResponseModel
+            };
+
+
+        }
+
 
 
         public async Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPosts()
@@ -294,6 +341,56 @@ namespace Repositories.Service
                 Data = postResponseModels
             };
         }
+        public async Task<ResponseObject<IEnumerable<PostResponseModel>>> GetAllPostsForEditor(int editorUserId)
+        {
+            // Get the user's posts
+            var posts = await _postRepository.GetPostsByAuthorId(editorUserId);
+            var postResponseModels = new List<PostResponseModel>();
+
+            foreach (var post in posts)
+            {
+                var postResponseModel = _mapper.Map<PostResponseModel>(post);
+
+                // Truy xuất thông tin người dùng từ repository
+                var author = await _userRepository.GetUserById(post.AuthorId);
+                postResponseModel.AuthorName = author?.Name;
+
+                // Use the CategoryRepository to get the categories by name
+                var categoryNames = new List<string>();
+                if (post.Categories != null && post.Categories.Any())
+                {
+                    foreach (var category in post.Categories)
+                    {
+                        var categoryEntity = await _categoryRepository.GetCategoryByName(category.CategoryName);
+                        if (categoryEntity != null)
+                        {
+                            categoryNames.Add(categoryEntity.CategoryName);
+                        }
+                    }
+                }
+                postResponseModel.CategoryNames = categoryNames;
+
+                // Lấy danh sách tên event và gán vào postResponseModel
+                var eventNames = post.Events?.Select(events => events.EventName).ToList();
+                postResponseModel.EventNames = eventNames;
+
+                // Lấy danh sách các PostMetaResponseModel và gán vào postResponseModel
+                var postMetas = _mapper.Map<List<PostMetaResponseModel>>(post.PostMetas);
+                postResponseModel.PostMetas = postMetas;
+
+                // Lấy danh sách các ImageResponseModel và gán vào postResponseModel
+                var images = _mapper.Map<List<ImageResponseModel>>(post.Images);
+                postResponseModel.Images = images;
+                postResponseModels.Add(postResponseModel);
+            }
+
+            return new ResponseObject<IEnumerable<PostResponseModel>>
+            {
+                Message = "Posts retrieved successfully",
+                Data = postResponseModels
+            };
+        }
+
 
         public async Task<ResponseObject<PostResponseModel>> GetPostsByAuthorId(int authorId)
         {
