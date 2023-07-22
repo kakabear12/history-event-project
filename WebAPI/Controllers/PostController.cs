@@ -23,10 +23,12 @@ namespace WebAPI.Controllers
     {
         private readonly IPostService _postService;
         private readonly IUserRepository _userRepository;
-        public PostController (IUserRepository userRepository, IPostService postService)
+        private readonly IMapper mapper;
+        public PostController (IUserRepository userRepository, IPostService postService, IMapper mapper)
         {
             _postService = postService;
             _userRepository = userRepository;
+            this.mapper = mapper;
            
         }
         private int UserID => int.Parse(FindClaim(ClaimTypes.NameIdentifier));
@@ -72,6 +74,7 @@ namespace WebAPI.Controllers
         public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> GetAllPosts()
         {
             var response = await _postService.GetAllPosts();
+            var res = mapper.Map<PostResponseModel>(response);
             return Ok(response);
         }
 
