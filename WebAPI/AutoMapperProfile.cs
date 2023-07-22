@@ -40,6 +40,7 @@ namespace WebAPI
             CreateMap<UpdatePostRequestModel, Post>();
             CreateMap<DeletePostRequestModel,Post>();
             CreateMap<Post, PostResponseModel>();
+            CreateMap<Post, PostResponse>();
 
             //postmeta
             CreateMap<PostMetaRequestModel, PostMeta>();
