@@ -71,11 +71,11 @@ namespace WebAPI.Controllers
 
         [HttpGet]      
         [SwaggerOperation(Summary = "For get list of posts")]
-        public async Task<ActionResult<ResponseObject<IEnumerable<PostResponse>>>> GetAllPosts()
+        public async Task<ActionResult<ResponseObject<IEnumerable<PostResponseModel>>>> GetAllPosts()
         {
             var response = await _postService.GetAllPosts();
-            var res = mapper.Map<PostResponseModel>(response);
-            return Ok(res);
+            
+            return Ok(response);
         }
 
         [HttpGet("editor")]
