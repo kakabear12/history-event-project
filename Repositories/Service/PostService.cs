@@ -205,7 +205,7 @@ namespace Repositories.Service
         {
             var post = await _postRepository.GetPostById(id);
 
-            if (post == null)
+            if (post == null || post.Published == 0)
             {
                 return new ResponseObject<PostResponseModel>
                 {
@@ -299,6 +299,10 @@ namespace Repositories.Service
 
             foreach (var post in posts)
             {
+                if (post.Published == 0) // Check if post is not published
+                {
+                    continue;
+                }
                 var postResponseModel = _mapper.Map<PostResponseModel>(post);
 
                 // Truy xuất thông tin người dùng từ repository
